@@ -40,6 +40,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	this->m_lastTime = high_resolution_clock::now();
 
+	// add textures from the images folder
 	theTextureMgr->setRenderer(theRenderer);
 	theTextureMgr->addTexture("theBackground", "Images\\background.png");
 	
@@ -48,13 +49,16 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBackground")->getTWidth(), theTextureMgr->getTexture("theBackground")->getTHeight());
 
 	theTextureMgr->addTexture("thePaddle", "Images\\tile.png");
+	// position the paddle sprite at the bottom of the screen
 	paddleSprite.setSpritePos({ (375-((theTextureMgr->getTexture("thePaddle")->getTWidth())/2)), 450 });
 	paddleSprite.setTexture(theTextureMgr->getTexture("thePaddle"));
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("thePaddle")->getTWidth(), theTextureMgr->getTexture("thePaddle")->getTHeight());
 
+	// declare variables representing the size of each block
 	int xPos = 40;
 	int yPos = 20;
 	
+	// add textures for the coloured blocks
 	theTextureMgr->addTexture("theRedBlock", "Images\\Red.png");
 	theTextureMgr->addTexture("theOrangeBlock", "Images\\Orange.png");
 	theTextureMgr->addTexture("theYellowBlock", "Images\\Yellow.png");
@@ -65,15 +69,17 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theTextureMgr->addTexture("thePinkBlock", "Images\\Pink.png");
 	theTextureMgr->addTexture("theMagentaBlock", "Images\\PinkAGAIN.png");
 
-
+	// for each block in the 16x9 array 
 	for (int i = 0; i < 16; i++) 
 	{
 		for (int j = 0; j < 9; j++)
 		{
+			// position the block according to i and j values
 			blocks[i][j].setSpritePos({ (i * xPos)+55,(j*yPos)+55 });
-			
+			// add to the number of blocks
 			numberOfBlocks++;
 
+			// switch statement to determine which colour is assigned to the block, depending on the row (j)
 			switch (j) 
 			{
 				case 0:
@@ -200,6 +206,42 @@ void cGame::update(double deltaTime)
 				collidedBlocks.push_back(blocks[i][j]);
 			}
 		}
+	}
+
+	SDL_Rect paddleBoundingBlock = paddleSprite.getBoundingRect();
+
+	if (ballSprite.collidedWith(&paddleBoundingBlock, &ballBoundingBlock))
+	{
+		SDL_Point paddleCentre = paddleSprite.getSpriteCentre() + paddleSprite.getSpritePos();
+		SDL_Point ballCentre = ballSprite.getSpriteCentre() + ballSprite.getSpritePos();
+
+		SDL_Point entryDirection = paddleCentre - ballCentre;
+
+		int pushBackIterations = 0;
+		do {
+			pushBackIterations++;
+			if (pushBackIterations > 100) continue;
+
+			// move back a little bit
+			SDL_Point entryDirectionStep = entryDirection / 5;
+
+			SDL_Rect ballPos = ballSprite.getSpritePos();
+
+			ballPos.x -= entryDirectionStep.x;
+			ballPos.y -= entryDirectionStep.y;
+
+			ballSprite.setSpritePos(ballPos);
+
+			// update bounding block
+			ballSprite.setBoundingRect();
+			paddleSprite.setBoundingRect();
+
+			ballBoundingBlock = ballSprite.getBoundingRect();
+			paddleBoundingBlock = paddleSprite.getBoundingRect();
+
+		} while (paddleSprite.collidedWith(&paddleBoundingBlock, &ballBoundingBlock));
+
+		ballSprite.yVelocity *= -1;
 	}
 
 	if (collidedBlocks.size() > 0)

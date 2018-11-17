@@ -14,7 +14,7 @@ Initialise the sprite variables
 
 void cPaddle::initialise()
 {
-	// do this asap
+	
 }
 
 /*
@@ -46,4 +46,5 @@ void cPaddle::update(double deltaTime)
 	}
 
 	this->setSpritePos(currentPos);
+	setBoundingRect();
 }
