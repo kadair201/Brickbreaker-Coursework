@@ -8,10 +8,11 @@ Initialise the sprite variables
 
 void cBall::initialise()
 {
-	xVelocity = 2;
+	xVelocity = -2;
 	yVelocity = 2;
 	isMoving = false;
 	cout << isMoving;
+	setBoundingRect();
 }
 
 void cBall::update(double deltaTime)
@@ -79,4 +80,6 @@ void cBall::update(double deltaTime)
 	}
 	
 	this->setSpritePos(currentPos);
+	setBoundingRect();
+	
 }

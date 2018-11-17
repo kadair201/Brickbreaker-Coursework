@@ -71,6 +71,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		for (int j = 0; j < 9; j++)
 		{
 			blocks[i][j].setSpritePos({ (i * xPos)+55,(j*yPos)+55 });
+			
 			numberOfBlocks++;
 
 			switch (j) 
@@ -121,7 +122,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 				}
 				break;
 			}
-			
+			blocks[i][j].initialise();
 			
 		}
 		
@@ -184,6 +185,101 @@ void cGame::update(double deltaTime)
 {
 	paddleSprite.update(deltaTime);
 	ballSprite.update(deltaTime);
+
+	vector<cBlock> collidedBlocks;
+	SDL_Rect ballBoundingBlock = ballSprite.getBoundingRect();
+
+	for (int i = 0; i < 16; i++) 
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			SDL_Rect blockBoundingBlock = blocks[i][j].getBoundingRect();
+
+			if (blocks[i][j].collidedWith(&blockBoundingBlock, &ballBoundingBlock))
+			{
+				collidedBlocks.push_back(blocks[i][j]);
+			}
+		}
+	}
+
+	if (collidedBlocks.size() > 0)
+	{
+		cBlock collidedBlock = collidedBlocks[0];
+		
+		for (int i = 1; i < collidedBlocks.size(); i++)
+		{
+			SDL_Point ballCentre = ballSprite.getSpriteCentre();
+			SDL_Point firstCollidedBlockCentre = collidedBlock.getSpriteCentre();
+			SDL_Point secondCollidedBlockCentre = collidedBlocks[i].getSpriteCentre();
+
+			SDL_Point direction1 = {
+				ballCentre.x - firstCollidedBlockCentre.x,
+				ballCentre.y - firstCollidedBlockCentre.y
+			};
+
+			SDL_Point direction2 = {
+				ballCentre.x - secondCollidedBlockCentre.x,
+				ballCentre.y - secondCollidedBlockCentre.y
+			};
+
+			float distance1 = (float)sqrt((direction1.x * direction1.x) + (direction1.y * direction1.y));
+			float distance2 = (float)sqrt((direction2.x * direction2.x) + (direction2.y * direction2.y));
+
+			if (distance1 > distance2)
+			{
+				collidedBlock = collidedBlocks[i];
+			}
+		}
+
+		SDL_Point blockCentre = collidedBlock.getSpriteCentre() + collidedBlock.getSpritePos();
+		SDL_Point ballCentre = ballSprite.getSpriteCentre() + ballSprite.getSpritePos();
+
+		SDL_Point entryDirection = blockCentre - ballCentre;
+
+		int pushBackIterations = 0;
+		do {
+			pushBackIterations++;
+			if (pushBackIterations > 100) continue;
+
+			// move back a little bit
+			SDL_Point entryDirectionStep = entryDirection / 5;
+
+			SDL_Rect ballPos = ballSprite.getSpritePos();
+
+			ballPos.x -= entryDirectionStep.x;
+			ballPos.y -= entryDirectionStep.y;
+
+			ballSprite.setSpritePos(ballPos);
+
+			// update bounding block
+			ballSprite.setBoundingRect();
+
+			ballBoundingBlock = ballSprite.getBoundingRect();
+
+		} while (collidedBlock.collidedWith(&collidedBlock.getBoundingRect(), &ballBoundingBlock));
+
+		if (ballCentre.y > blockCentre.y) {
+			// Hit from or right below, flip x
+			if (ballCentre.x < blockCentre.x - 20 || ballCentre.x > blockCentre.x + 20) {
+				ballSprite.xVelocity *= -1;
+			}
+			else {
+				// Hit from directly below, flip y
+				ballSprite.yVelocity *= -1;
+			}
+		}
+
+		if (ballCentre.y < blockCentre.y) {
+			// Hit from or right above, flip x
+			if (ballCentre.x < blockCentre.x - 20 || ballCentre.x > blockCentre.x + 20) {
+				ballSprite.xVelocity *= -1;
+			}
+			else {
+				// Hit from directly above, flip y
+				ballSprite.yVelocity *= -1;
+			}
+		}
+	}
 }
 
 bool cGame::getInput(bool theLoop)

@@ -29,11 +29,14 @@ private:
 	int textureWidth;
 	int textureHeight;
 
+	
+
 
 public:
 	cSprite();			// Default constructor
 	cSprite(cTexture* theSpriteTexture);			// Default constructor
 	~cSprite();			// Destructor
+
 	void render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, FPoint theScaling);
 	void render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, double rotAngle, SDL_Point* spriteCentre, FPoint theScaling);
 	SDL_Rect getSpritePos();  // Return the sprites current position
@@ -47,7 +50,8 @@ public:
 	FPoint getSpriteScale();  // Return the sprites scaling factor
 	void setSpriteScale(FPoint sScale); // set the sprites scaling factor
 	void scaleSprite(); // update the sprites width & height
-	void setBoundingRect(SDL_Rect pRect);		// Determine the bounding rectangle for the sprite
+	void setBoundingRect();		// Determine the bounding rectangle for the sprite
 	SDL_Rect getBoundingRect();		// Get the bounding rectangle for the sprite
+	bool collidedWith(SDL_Rect* thisSprite, SDL_Rect* otherSpritePos);	// Check for collisions
 };
 #endif

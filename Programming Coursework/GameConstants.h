@@ -45,4 +45,26 @@ inline SDL_Point operator+(SDL_Point const &a, SDL_Point const &b)
 	return SDL_Point{ a.x + b.x , a.y + b.y };
 }
 
+inline SDL_Point operator+(SDL_Point const &a, SDL_Rect const &b)
+{
+	return SDL_Point{ a.x + b.x , a.y + b.y };
+}
+
+
+inline SDL_Point operator-(SDL_Point const &a, SDL_Point const &b)
+{
+	return SDL_Point{ a.x - b.x , a.y - b.y };
+}
+
+inline SDL_Point operator/(SDL_Point const &a, int const &b)
+{
+	return SDL_Point{ a.x / b , a.y / b };
+}
+
+
+inline SDL_Point operator*(SDL_Point const &a, int const &b)
+{
+	return SDL_Point{ a.x * b , a.y * b };
+}
+
 #endif
