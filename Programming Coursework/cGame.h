@@ -30,6 +30,7 @@ public:
 	bool getInput(bool theLoop);
 	double getElapsedSeconds();
 	int numberOfBlocks;
+	int playerScore;
 	cBlock blocks[16][9];
 
 	static cGame* getInstance();

@@ -31,35 +31,40 @@ cGame* cGame::getInstance()
 	return cGame::pInstance;
 }
 
+/*
+=================================================================================
+Initialisation
+=================================================================================
+*/
 
 void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
-	// Clear the buffer with a black background
-	SDL_SetRenderDrawColor(theRenderer, 0, 0, 0, 255);
+	
+	SDL_SetRenderDrawColor(theRenderer, 0, 0, 0, 255); // Clear the buffer with a black background
 	SDL_RenderPresent(theRenderer);
 
 	this->m_lastTime = high_resolution_clock::now();
 
-	// add textures from the images folder
+	playerScore = 0;  // reset score
+
 	theTextureMgr->setRenderer(theRenderer);
-	theTextureMgr->addTexture("theBackground", "Images\\background.png");
+	theTextureMgr->addTexture("theBackground", "Images\\background.png"); // add textures from the images folder
 	
 	spriteBkgd.setSpritePos({ 0, 0 });
 	spriteBkgd.setTexture(theTextureMgr->getTexture("theBackground"));
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBackground")->getTWidth(), theTextureMgr->getTexture("theBackground")->getTHeight());
 
-	theTextureMgr->addTexture("thePaddle", "Images\\tile.png");
-	// position the paddle sprite at the bottom of the screen
-	paddleSprite.setSpritePos({ (375-((theTextureMgr->getTexture("thePaddle")->getTWidth())/2)), 450 });
+	theTextureMgr->addTexture("thePaddle", "Images\\tile.png");  // position the paddle sprite at the bottom of the screen
+	paddleSprite.setSpritePos({ (375-((theTextureMgr->getTexture("thePaddle")->getTWidth())/2)), 450 }); 
 	paddleSprite.setTexture(theTextureMgr->getTexture("thePaddle"));
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("thePaddle")->getTWidth(), theTextureMgr->getTexture("thePaddle")->getTHeight());
 
-	// declare variables representing the size of each block
-	int xPos = 40;
+	
+	int xPos = 40; // declare variables representing the size of each block
 	int yPos = 20;
 	
-	// add textures for the coloured blocks
-	theTextureMgr->addTexture("theRedBlock", "Images\\Red.png");
+	
+	theTextureMgr->addTexture("theRedBlock", "Images\\Red.png"); // add textures for the coloured blocks
 	theTextureMgr->addTexture("theOrangeBlock", "Images\\Orange.png");
 	theTextureMgr->addTexture("theYellowBlock", "Images\\Yellow.png");
 	theTextureMgr->addTexture("theGreenBlock", "Images\\Green.png");
@@ -69,81 +74,96 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theTextureMgr->addTexture("thePinkBlock", "Images\\Pink.png");
 	theTextureMgr->addTexture("theMagentaBlock", "Images\\PinkAGAIN.png");
 
-	// for each block in the 16x9 array 
-	for (int i = 0; i < 16; i++) 
+	
+	for (int i = 0; i < 16; i++) // for each block in the 16x9 array 
 	{
 		for (int j = 0; j < 9; j++)
 		{
-			// position the block according to i and j values
-			blocks[i][j].setSpritePos({ (i * xPos)+55,(j*yPos)+55 });
-			// add to the number of blocks
+			blocks[i][j].setSpritePos({ (i * xPos)+55,(j*yPos)+55 });  // position the block according to i and j values
+			
 			numberOfBlocks++;
 
 			// switch statement to determine which colour is assigned to the block, depending on the row (j)
+			// each colour has a different score value
 			switch (j) 
 			{
 				case 0:
 				{
 					blocks[i][j].setTexture(theTextureMgr->getTexture("theRedBlock"));
+					blocks[i][j].scoreValue = 90;
 				}
 				break;
 				case 1:
 				{
 					blocks[i][j].setTexture(theTextureMgr->getTexture("theOrangeBlock"));
+					blocks[i][j].scoreValue = 80;
 				}
 				break;
 				case 2:
 				{
 					blocks[i][j].setTexture(theTextureMgr->getTexture("theYellowBlock"));
+					blocks[i][j].scoreValue = 70;
 				}
 				break;
 				case 3:
 				{
 					blocks[i][j].setTexture(theTextureMgr->getTexture("theGreenBlock"));
+					blocks[i][j].scoreValue = 60;
 				}
 				break;
 				case 4:
 				{
 					blocks[i][j].setTexture(theTextureMgr->getTexture("theBlueBlock"));
+					blocks[i][j].scoreValue = 50;
 				}
 				break;
 				case 5:
 				{
 					blocks[i][j].setTexture(theTextureMgr->getTexture("theDarkBlueBlock"));
+					blocks[i][j].scoreValue = 40;
 				}
 				break;
 				case 6:
 				{
 					blocks[i][j].setTexture(theTextureMgr->getTexture("thePurpleBlock"));
+					blocks[i][j].scoreValue = 30;
 				}
 				break;
 				case 7:
 				{
 					blocks[i][j].setTexture(theTextureMgr->getTexture("thePinkBlock"));
+					blocks[i][j].scoreValue = 20;
 				}
 				break;
 				case 8:
 				{
 					blocks[i][j].setTexture(theTextureMgr->getTexture("theMagentaBlock"));
+					blocks[i][j].scoreValue = 10;
 				}
 				break;
 			}
-			blocks[i][j].initialise();
+			blocks[i][j].initialise(); // set the bounding rectangle for each block from cBlock
 			
 		}
 		
 	}
 	
-	theTextureMgr->addTexture("theBall", "Images\\ball.png");
+	theTextureMgr->addTexture("theBall", "Images\\ball.png"); // texture and position the ball on top of the paddle
 	ballSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("theBall")->getTWidth()) / 2)), (450-(theTextureMgr->getTexture("theBall")->getTHeight())) });
 	ballSprite.setTexture(theTextureMgr->getTexture("theBall"));
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBall")->getTWidth(), theTextureMgr->getTexture("theBall")->getTHeight());
-
-	ballSprite.initialise();
+	
+	ballSprite.initialise(); // set the bounding rectangles from cBall and cPaddle
 	paddleSprite.initialise();
 
-	cout << numberOfBlocks;
+	cout << numberOfBlocks; // output the number of blocks on the screen (should be 144)
 }
+
+/*
+=================================================================================
+Run
+=================================================================================
+*/
 
 void cGame::run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
@@ -151,14 +171,19 @@ void cGame::run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	while (loop)
 	{
-		//We get the time that passed since the last frame
-		double elapsedTime = this->getElapsedSeconds();
+		double elapsedTime = this->getElapsedSeconds(); // get the time that passed since the last frame
 
 		loop = this->getInput(loop);
 		this->update(elapsedTime);
 		this->render(theSDLWND, theRenderer);
 	}
 }
+
+/*
+=================================================================================
+Render
+=================================================================================
+*/
 
 void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
@@ -170,7 +195,10 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	{
 		for (int j = 0; j < 9; j++)
 		{
-			blocks[i][j].render(theRenderer, &blocks[i][j].getSpriteDimensions(), &blocks[i][j].getSpritePos(), NULL, &blocks[i][j].getSpriteCentre(), blocks[i][j].getSpriteScale());
+			if (blocks[i][j].isActive)
+			{
+				blocks[i][j].render(theRenderer, &blocks[i][j].getSpriteDimensions(), &blocks[i][j].getSpritePos(), NULL, &blocks[i][j].getSpriteCentre(), blocks[i][j].getSpriteScale());
+			}
 		}
 	}
 	SDL_RenderPresent(theRenderer);
@@ -187,44 +215,60 @@ void cGame::update()
 
 }
 
+/*
+=================================================================================
+Update 
+=================================================================================
+*/
+
 void cGame::update(double deltaTime)
 {
-	paddleSprite.update(deltaTime);
+	
+	paddleSprite.update(deltaTime); // call the update methods of paddle/ball scripts to allow continuous movement
 	ballSprite.update(deltaTime);
 
-	vector<cBlock> collidedBlocks;
+	vector<cBlock> collidedBlocks; // vector (list) of collided blocks, in case the ball hits more than one
+
 	SDL_Rect ballBoundingBlock = ballSprite.getBoundingRect();
 
-	for (int i = 0; i < 16; i++) 
+	for (int i = 0; i < 16; i++) 	// for every block in the 16x9 array
 	{
 		for (int j = 0; j < 9; j++)
 		{
 			SDL_Rect blockBoundingBlock = blocks[i][j].getBoundingRect();
 
-			if (blocks[i][j].collidedWith(&blockBoundingBlock, &ballBoundingBlock))
-			{
-				collidedBlocks.push_back(blocks[i][j]);
+			if (blocks[i][j].collidedWith(&blockBoundingBlock, &ballBoundingBlock)) // check for collisions between the ball and each block
+			{	
+				if (blocks[i][j].isActive) // if the block hasn't already been destroyed
+				{
+					collidedBlocks.push_back(blocks[i][j]); // add the block to the list of collided blocks
+					playerScore += blocks[i][j].scoreValue; // add to the score, depending on the value (colour) of the block
+					blocks[i][j].isActive = false; // the block is now destroyed
+				}
 			}
 		}
 	}
 
 	SDL_Rect paddleBoundingBlock = paddleSprite.getBoundingRect();
 
-	if (ballSprite.collidedWith(&paddleBoundingBlock, &ballBoundingBlock))
+	// repeat the process, this time checking for collisions between the ball and the paddle
+	if (ballSprite.collidedWith(&paddleBoundingBlock, &ballBoundingBlock)) 
 	{
-		SDL_Point paddleCentre = paddleSprite.getSpriteCentre() + paddleSprite.getSpritePos();
+		// find the centre of each sprite, plus their position on the screen
+		SDL_Point paddleCentre = paddleSprite.getSpriteCentre() + paddleSprite.getSpritePos();  
 		SDL_Point ballCentre = ballSprite.getSpriteCentre() + ballSprite.getSpritePos();
 
+		// if the ball is moving too fast and clips through the paddle, find the entry direction first
 		SDL_Point entryDirection = paddleCentre - ballCentre;
 
+		// slowly push the ball sprite back from the entry direction until the ball is no longer clipped through the paddle
+		// Lines 258-261 and 325-328 came from my coursemate Josh Lee
 		int pushBackIterations = 0;
 		do {
 			pushBackIterations++;
 			if (pushBackIterations > 100) continue;
 
-			// move back a little bit
-			SDL_Point entryDirectionStep = entryDirection / 5;
-
+			SDL_Point entryDirectionStep = entryDirection / 5;  // move back a little bit
 			SDL_Rect ballPos = ballSprite.getSpritePos();
 
 			ballPos.x -= entryDirectionStep.x;
@@ -232,24 +276,27 @@ void cGame::update(double deltaTime)
 
 			ballSprite.setSpritePos(ballPos);
 
-			// update bounding block
-			ballSprite.setBoundingRect();
+			ballSprite.setBoundingRect(); // update bounding block
 			paddleSprite.setBoundingRect();
 
 			ballBoundingBlock = ballSprite.getBoundingRect();
 			paddleBoundingBlock = paddleSprite.getBoundingRect();
 
+			// repeat this continuously while the ball is colliding with the paddle
 		} while (paddleSprite.collidedWith(&paddleBoundingBlock, &ballBoundingBlock));
 
+		// now that the ball has hit the paddle, bounce with negative velocity
 		ballSprite.yVelocity *= -1;
 	}
 
+	// if the collidedBlocks vector is greater than zero, i.e. there has been a recorded collision with a block
 	if (collidedBlocks.size() > 0)
 	{
 		cBlock collidedBlock = collidedBlocks[0];
 		
 		for (int i = 1; i < collidedBlocks.size(); i++)
 		{
+			// find the shortest distance between the ball and the centre of both collided blocks
 			SDL_Point ballCentre = ballSprite.getSpriteCentre();
 			SDL_Point firstCollidedBlockCentre = collidedBlock.getSpriteCentre();
 			SDL_Point secondCollidedBlockCentre = collidedBlocks[i].getSpriteCentre();
@@ -267,15 +314,18 @@ void cGame::update(double deltaTime)
 			float distance1 = (float)sqrt((direction1.x * direction1.x) + (direction1.y * direction1.y));
 			float distance2 = (float)sqrt((direction2.x * direction2.x) + (direction2.y * direction2.y));
 
+			// if the distance between block 1 is bigger than block 2, make block 2 the current closest block
 			if (distance1 > distance2)
 			{
 				collidedBlock = collidedBlocks[i];
 			}
 		}
 
+		// only act on the closest block - don't bounce off both
 		SDL_Point blockCentre = collidedBlock.getSpriteCentre() + collidedBlock.getSpritePos();
 		SDL_Point ballCentre = ballSprite.getSpriteCentre() + ballSprite.getSpritePos();
 
+		// repeat the same process of the ball hitting the paddle, this time with the block
 		SDL_Point entryDirection = blockCentre - ballCentre;
 
 		int pushBackIterations = 0;
@@ -283,8 +333,7 @@ void cGame::update(double deltaTime)
 			pushBackIterations++;
 			if (pushBackIterations > 100) continue;
 
-			// move back a little bit
-			SDL_Point entryDirectionStep = entryDirection / 5;
+			SDL_Point entryDirectionStep = entryDirection / 5; // move back a little bit
 
 			SDL_Rect ballPos = ballSprite.getSpritePos();
 
@@ -292,14 +341,14 @@ void cGame::update(double deltaTime)
 			ballPos.y -= entryDirectionStep.y;
 
 			ballSprite.setSpritePos(ballPos);
-
-			// update bounding block
-			ballSprite.setBoundingRect();
+			
+			ballSprite.setBoundingRect();  // update bounding block
 
 			ballBoundingBlock = ballSprite.getBoundingRect();
 
 		} while (collidedBlock.collidedWith(&collidedBlock.getBoundingRect(), &ballBoundingBlock));
 
+		// Lines 348-368 are from my coursemate Ruari McGhee
 		if (ballCentre.y > blockCentre.y) {
 			// Hit from or right below, flip x
 			if (ballCentre.x < blockCentre.x - 20 || ballCentre.x > blockCentre.x + 20) {
@@ -321,6 +370,7 @@ void cGame::update(double deltaTime)
 				ballSprite.yVelocity *= -1;
 			}
 		}
+
 	}
 }
 

@@ -4,7 +4,7 @@ int initCount = 0;
 
 void cBlock::initialise() {
 	setBoundingRect();
-	cout << getBoundingRect().w;
+	isActive = true;
 }
 
 void cBlock::update(double deltaTime) {

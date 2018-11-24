@@ -67,4 +67,7 @@ inline SDL_Point operator*(SDL_Point const &a, int const &b)
 	return SDL_Point{ a.x * b , a.y * b };
 }
 
+enum class textType { solid, blended, shaded };
+enum class soundType { sfx, music };
+
 #endif

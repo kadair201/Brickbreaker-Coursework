@@ -8,8 +8,8 @@ Initialise the sprite variables
 
 void cBall::initialise()
 {
-	xVelocity = -2;
-	yVelocity = 2;
+	xVelocity = -1;
+	yVelocity = 1;
 	isMoving = false;
 	cout << isMoving;
 	setBoundingRect();
@@ -21,13 +21,15 @@ void cBall::update(double deltaTime)
 
 	if (isMoving) 
 	{
+		// this relies on the ball being 20x20 pixels - if the ball size changes, these values are changed
+		// if the ball 
 		if (currentPos.x < 730) {
 			currentPos.x += (xVelocity);
 			currentPos.y -= (yVelocity);
 		}
 		else
 		{
-			xVelocity = -2;
+			xVelocity = -1;
 		}
 
 		if (currentPos.x > 0) {
@@ -36,7 +38,7 @@ void cBall::update(double deltaTime)
 		}
 		else
 		{
-			xVelocity = 2;
+			xVelocity = 1;
 		}
 
 		if (currentPos.y < 480) {
@@ -45,7 +47,7 @@ void cBall::update(double deltaTime)
 		}
 		else
 		{
-			yVelocity = 2;
+			yVelocity = 1;
 		}
 
 		if (currentPos.y > 0) {
@@ -54,7 +56,7 @@ void cBall::update(double deltaTime)
 		}
 		else
 		{
-			yVelocity = -2;
+			yVelocity = -1;
 		}
 	}
 

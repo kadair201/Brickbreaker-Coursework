@@ -85,8 +85,9 @@
     </Link>
     <PostBuildEvent>
       <Command>echo copying SDL2.dll to debug directory
-xcopy /Y "$(ProjectDir)Cards\*.*" "$(OutDir)Cards\"
+xcopy /Y "$(ProjectDir)Audio\*.*" "$(OutDir)Audio\"
 xcopy /Y "$(ProjectDir)Images\*.*" "$(OutDir)Images\"
+xcopy /Y "$(ProjectDir)Fonts\*.*" "$(OutDir)Fonts\"
 xcopy /Y "SDL2\SDL2-2.0.4\lib\x86\SDL2.dll" "$(OutDir)"
 xcopy /Y "SDL2\SDL2_image-2.0.1\lib\x86\*.dll" "$(OutDir)"
 xcopy /Y "SDL2\SDL2_ttf-2.0.14\lib\x86\*.dll" "$(OutDir)"
@@ -120,8 +121,9 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     </Link>
     <PostBuildEvent>
       <Command>echo copying SDL2.dll to debug directory
-xcopy /Y "$(ProjectDir)Cards\*.*" "$(OutDir)Cards\"
+xcopy /Y "$(ProjectDir)Audio\*.*" "$(OutDir)Audio\"
 xcopy /Y "$(ProjectDir)Images\*.*" "$(OutDir)Images\"
+xcopy /Y "$(ProjectDir)Fonts\*.*" "$(OutDir)Fonts\"
 xcopy /Y "SDL2\SDL2-2.0.4\lib\x86\SDL2.dll" "$(OutDir)"
 xcopy /Y "SDL2\SDL2_image-2.0.1\lib\x86\*.dll" "$(OutDir)"
 xcopy /Y "SDL2\SDL2_ttf-2.0.14\lib\x86\*.dll" "$(OutDir)"
@@ -147,6 +149,7 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="cBall.h" />
     <ClInclude Include="cBkGround.h" />
     <ClInclude Include="cBlock.h" />
+    <ClInclude Include="cFontMgr.h" />
     <ClInclude Include="cGame.h" />
     <ClInclude Include="cPaddle.h" />
     <ClInclude Include="cSDL2WNDManager.h" />
@@ -154,11 +157,14 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="cTexture.h" />
     <ClInclude Include="cTextureMgr.h" />
     <ClInclude Include="GameConstants.h" />
+    <ClInclude Include="cFont.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cBall.cpp" />
     <ClCompile Include="cBkGround.cpp" />
     <ClCompile Include="cBlock.cpp" />
+    <ClCompile Include="cFont.cpp" />
+    <ClCompile Include="cFontMgr.cpp" />
     <ClCompile Include="cGameStuVer.cpp" />
     <ClCompile Include="cPaddle.cpp" />
     <ClCompile Include="cSDL2WNDManager.cpp" />

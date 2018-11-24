@@ -7,6 +7,9 @@ class cBlock : public cSprite
 public:
 	void initialise();		// Default render function
 	void update(double deltaTime);		// block update method
+	
+	bool isActive;
+	int scoreValue;
 };
 
 #endif
