@@ -10,5 +10,8 @@
 #include "cBlock.h"
 #include "cTextureMgr.h"
 #include "cTexture.h"
+#include "cFontMgr.h"
+#include "cFont.h"
+
 
 #endif

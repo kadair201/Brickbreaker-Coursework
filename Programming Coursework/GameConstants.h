@@ -27,11 +27,13 @@ constexpr auto PI = 3.14159265;
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <chrono>
+using namespace std::chrono;
 
 using namespace std;
 
 //Define the string to appear in the top left corner of the window
-#define WINDOW_TITLE "Space Rockets - Using Transforms!"
+#define WINDOW_TITLE "Breakout!"
 
 // This header file contains all the constants & enumarated types for the game
 typedef struct fpoint

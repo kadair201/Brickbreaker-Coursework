@@ -3,7 +3,6 @@
 cFont.cpp
 ==========================================================================
 */
-//#pragma warning ( disable : 4996 )
 #include "cFont.h"
 using namespace std;
 

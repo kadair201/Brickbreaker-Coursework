@@ -7,6 +7,9 @@ cGame.cpp
 
 cGame* cGame::pInstance = NULL;
 static cTextureMgr* theTextureMgr = cTextureMgr::getInstance();
+static cFontMgr* theFontMgr = cFontMgr::getInstance();
+
+//static cSoundMgr* theSoundMgr = cSoundMgr::getInstance();
 
 /*
 =================================================================================
@@ -147,7 +150,23 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		}
 		
 	}
+	theFontMgr->initFontLib();
+	//theSoundMgr->initMixer();
+
+	// Create textures for Game Dialogue (text)
+	fontList = { "digital", "spaceAge" };
+	fontsToUse = { "Fonts/digital-7.ttf", "Fonts/space age.ttf" };
+	for (int fonts = 0; fonts < (int)fontList.size(); fonts++)
+	{
+		theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 36);
+	}
+	gameTextList = { "Asteroids", "Score : " };
+	strScore = gameTextList[1];
+	strScore += to_string(playerScore).c_str();
 	
+	theTextureMgr->addTexture("Title", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, gameTextList[0], textType::solid, { 0, 255, 0, 255 }, { 0, 0, 0, 0 }));
+	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 0, 255, 0, 255 }, { 0, 0, 0, 0 }));
+
 	theTextureMgr->addTexture("theBall", "Images\\ball.png"); // texture and position the ball on top of the paddle
 	ballSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("theBall")->getTWidth()) / 2)), (450-(theTextureMgr->getTexture("theBall")->getTHeight())) });
 	ballSprite.setTexture(theTextureMgr->getTexture("theBall"));
@@ -201,6 +220,18 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 			}
 		}
 	}
+	theTextureMgr->deleteTexture("playerScore");
+	strScore = gameTextList[1];
+	strScore += to_string(playerScore).c_str();
+	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 0, 255, 0, 255 }, { 0, 0, 0, 0 }));
+
+	cTexture* tempTextTexture1 = theTextureMgr->getTexture("Title");
+	cTexture* tempTextTexture2 = theTextureMgr->getTexture("playerScore");
+	SDL_Rect pos1 = { 10, 10, tempTextTexture1->getTextureRect().w, tempTextTexture1->getTextureRect().h };
+	SDL_Rect pos2 = {(740-tempTextTexture2->getTextureRect().w), 10, tempTextTexture2->getTextureRect().w, tempTextTexture2->getTextureRect().h };
+	FPoint scale = { 1,1 };
+	tempTextTexture1->renderTexture(theRenderer, tempTextTexture1->getTexture(), &tempTextTexture1->getTextureRect(), &pos1, scale);
+	tempTextTexture2->renderTexture(theRenderer, tempTextTexture2->getTexture(), &tempTextTexture2->getTextureRect(), &pos2, scale);
 	SDL_RenderPresent(theRenderer);
 }
 
@@ -227,6 +258,7 @@ void cGame::update(double deltaTime)
 	paddleSprite.update(deltaTime); // call the update methods of paddle/ball scripts to allow continuous movement
 	ballSprite.update(deltaTime);
 
+	
 	vector<cBlock> collidedBlocks; // vector (list) of collided blocks, in case the ball hits more than one
 
 	SDL_Rect ballBoundingBlock = ballSprite.getBoundingRect();

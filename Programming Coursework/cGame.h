@@ -31,6 +31,7 @@ public:
 	double getElapsedSeconds();
 	int numberOfBlocks;
 	int playerScore;
+	string strScore;
 	cBlock blocks[16][9];
 
 	static cGame* getInstance();
@@ -48,8 +49,19 @@ private:
 	cSprite spriteBkgd;
 	cPaddle paddleSprite;
 	cBall ballSprite;
-	// Game objects
+	vector<LPCSTR> textName;
+	vector<LPCSTR> texturesToUse;
 	
+	// Fonts to use
+	vector<LPCSTR> fontList;
+	vector<LPCSTR> fontsToUse;
+	// Text for Game
+	vector<LPCSTR> gameTextList;
+	// Game Sounds
+	vector<LPCSTR> soundList;
+	vector<soundType> soundTypes;
+	vector<LPCSTR> soundsToUse;
+
 
 };
 
