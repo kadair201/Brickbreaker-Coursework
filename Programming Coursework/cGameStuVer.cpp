@@ -9,6 +9,9 @@ cGame* cGame::pInstance = NULL;
 static cTextureMgr* theTextureMgr = cTextureMgr::getInstance();
 static cFontMgr* theFontMgr = cFontMgr::getInstance();
 
+// controls the colours of the text
+Uint8 colourVal = 150;
+
 //static cSoundMgr* theSoundMgr = cSoundMgr::getInstance();
 
 /*
@@ -153,19 +156,18 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theFontMgr->initFontLib();
 	//theSoundMgr->initMixer();
 
-	// Create textures for Game Dialogue (text)
-	fontList = { "digital", "spaceAge" };
+	fontList = { "digital", "spaceAge" }; // create textures for text
 	fontsToUse = { "Fonts/digital-7.ttf", "Fonts/space age.ttf" };
 	for (int fonts = 0; fonts < (int)fontList.size(); fonts++)
 	{
 		theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 36);
 	}
-	gameTextList = { "Asteroids", "Score : " };
+	gameTextList = { "Breakout!", "Score: " };
 	strScore = gameTextList[1];
 	strScore += to_string(playerScore).c_str();
 	
-	theTextureMgr->addTexture("Title", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, gameTextList[0], textType::solid, { 0, 255, 0, 255 }, { 0, 0, 0, 0 }));
-	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 0, 255, 0, 255 }, { 0, 0, 0, 0 }));
+	theTextureMgr->addTexture("Title", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, gameTextList[0], textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
+	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
 
 	theTextureMgr->addTexture("theBall", "Images\\ball.png"); // texture and position the ball on top of the paddle
 	ballSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("theBall")->getTWidth()) / 2)), (450-(theTextureMgr->getTexture("theBall")->getTHeight())) });
@@ -223,7 +225,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theTextureMgr->deleteTexture("playerScore");
 	strScore = gameTextList[1];
 	strScore += to_string(playerScore).c_str();
-	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 0, 255, 0, 255 }, { 0, 0, 0, 0 }));
+	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
 
 	cTexture* tempTextTexture1 = theTextureMgr->getTexture("Title");
 	cTexture* tempTextTexture2 = theTextureMgr->getTexture("playerScore");
@@ -282,7 +284,7 @@ void cGame::update(double deltaTime)
 	}
 
 	SDL_Rect paddleBoundingBlock = paddleSprite.getBoundingRect();
-
+	
 	// repeat the process, this time checking for collisions between the ball and the paddle
 	if (ballSprite.collidedWith(&paddleBoundingBlock, &ballBoundingBlock)) 
 	{
@@ -294,7 +296,7 @@ void cGame::update(double deltaTime)
 		SDL_Point entryDirection = paddleCentre - ballCentre;
 
 		// slowly push the ball sprite back from the entry direction until the ball is no longer clipped through the paddle
-		// Lines 258-261 and 325-328 came from my coursemate Josh Lee
+		// The following 4 lines came from my coursemate Josh Lee
 		int pushBackIterations = 0;
 		do {
 			pushBackIterations++;
@@ -360,6 +362,7 @@ void cGame::update(double deltaTime)
 		// repeat the same process of the ball hitting the paddle, this time with the block
 		SDL_Point entryDirection = blockCentre - ballCentre;
 
+		// The following 4 lines came from my coursemate Josh Lee
 		int pushBackIterations = 0;
 		do {
 			pushBackIterations++;
@@ -380,7 +383,7 @@ void cGame::update(double deltaTime)
 
 		} while (collidedBlock.collidedWith(&collidedBlock.getBoundingRect(), &ballBoundingBlock));
 
-		// Lines 348-368 are from my coursemate Ruari McGhee
+		// The following two if statements are from my coursemate Ruari McGhee
 		if (ballCentre.y > blockCentre.y) {
 			// Hit from or right below, flip x
 			if (ballCentre.x < blockCentre.x - 20 || ballCentre.x > blockCentre.x + 20) {
