@@ -12,6 +12,8 @@
 #include "cTexture.h"
 #include "cFontMgr.h"
 #include "cFont.h"
+#include "cPrompts.h"
+
 
 
 #endif

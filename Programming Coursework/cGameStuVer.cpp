@@ -80,6 +80,9 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theTextureMgr->addTexture("thePinkBlock", "Images\\Pink.png");
 	theTextureMgr->addTexture("theMagentaBlock", "Images\\PinkAGAIN.png");
 
+	theTextureMgr->addTexture("leftArrow", "Images\\left.png");
+	theTextureMgr->addTexture("rightArrow", "Images\\right.png");
+	theTextureMgr->addTexture("spacebar", "Images\\space.png");
 	
 	for (int i = 0; i < 16; i++) // for each block in the 16x9 array 
 	{
@@ -168,11 +171,23 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	
 	theTextureMgr->addTexture("Title", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, gameTextList[0], textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
 	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
-
 	theTextureMgr->addTexture("theBall", "Images\\ball.png"); // texture and position the ball on top of the paddle
+
 	ballSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("theBall")->getTWidth()) / 2)), (450-(theTextureMgr->getTexture("theBall")->getTHeight())) });
 	ballSprite.setTexture(theTextureMgr->getTexture("theBall"));
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBall")->getTWidth(), theTextureMgr->getTexture("theBall")->getTHeight());
+
+	LpromptSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("spacebar")->getTWidth()) / 2) - (theTextureMgr->getTexture("leftArrow")->getTWidth())), 350 });
+	LpromptSprite.setTexture(theTextureMgr->getTexture("leftArrow"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("leftArrow")->getTWidth(), theTextureMgr->getTexture("leftArrow")->getTHeight());
+
+	RpromptSprite.setSpritePos({ (375 + (theTextureMgr->getTexture("spacebar")->getTWidth()) / 2), 350 });
+	RpromptSprite.setTexture(theTextureMgr->getTexture("rightArrow"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("rightArrow")->getTWidth(), theTextureMgr->getTexture("rightArrow")->getTHeight());
+	
+	SpromptSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("spacebar")->getTWidth()) / 2)), 300 });
+	SpromptSprite.setTexture(theTextureMgr->getTexture("spacebar"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("spacebar")->getTWidth(), theTextureMgr->getTexture("spacebar")->getTHeight());
 	
 	ballSprite.initialise(); // set the bounding rectangles from cBall and cPaddle
 	paddleSprite.initialise();
@@ -212,6 +227,22 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 	paddleSprite.render(theRenderer, &paddleSprite.getSpriteDimensions(), &paddleSprite.getSpritePos(), NULL, &paddleSprite.getSpriteCentre(), paddleSprite.getSpriteScale());
 	ballSprite.render(theRenderer, &ballSprite.getSpriteDimensions(), &ballSprite.getSpritePos(), NULL, &ballSprite.getSpriteCentre(), ballSprite.getSpriteScale());
+
+	if (!(paddleSprite.hasMoved))
+	{
+		LpromptSprite.render(theRenderer, &LpromptSprite.getSpriteDimensions(), &LpromptSprite.getSpritePos(), NULL, &LpromptSprite.getSpriteCentre(), LpromptSprite.getSpriteScale());
+	}
+
+	if (!(paddleSprite.hasMoved))
+	{
+		RpromptSprite.render(theRenderer, &RpromptSprite.getSpriteDimensions(), &RpromptSprite.getSpritePos(), NULL, &RpromptSprite.getSpriteCentre(), RpromptSprite.getSpriteScale());
+	}
+
+	if (!(ballSprite.isMoving))
+	{
+		SpromptSprite.render(theRenderer, &SpromptSprite.getSpriteDimensions(), &SpromptSprite.getSpritePos(), NULL, &SpromptSprite.getSpriteCentre(), SpromptSprite.getSpriteScale());
+	}
+	
 	for (int i = 0; i < 16; i++)
 	{
 		for (int j = 0; j < 9; j++)
@@ -462,6 +493,7 @@ bool cGame::getInput(bool theLoop)
 				{
 					ballSprite.isGoingLeft = true;
 				}
+				paddleSprite.hasMoved = true;
 				break; 
 			
 			case SDLK_RIGHT:
@@ -470,6 +502,7 @@ bool cGame::getInput(bool theLoop)
 				{
 					ballSprite.isGoingRight = true;
 				}
+				paddleSprite.hasMoved = true;
 				break;
 
 			case SDLK_SPACE:

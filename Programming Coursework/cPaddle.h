@@ -14,6 +14,7 @@ class cPaddle : public cSprite
 public:
 	bool isGoingLeft;
 	bool isGoingRight;
+	bool hasMoved;
 
 	void initialise();		// Default render function
 	void update(double deltaTime);		// Paddle update method

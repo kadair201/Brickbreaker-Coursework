@@ -15,6 +15,7 @@ Initialise the sprite variables
 void cPaddle::initialise()
 {
 	setBoundingRect();
+	hasMoved = false;
 }
 
 /*

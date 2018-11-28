@@ -45,10 +45,13 @@ private:
 	duration< double > deltaTime;
 
 	// game related variables
-	// Sprites for displaying background and rocket textures
+	// Sprites for displaying background
 	cSprite spriteBkgd;
 	cPaddle paddleSprite;
 	cBall ballSprite;
+	cPrompts LpromptSprite;
+	cPrompts RpromptSprite;
+	cPrompts SpromptSprite;
 	vector<LPCSTR> textName;
 	vector<LPCSTR> texturesToUse;
 	
@@ -61,8 +64,6 @@ private:
 	vector<LPCSTR> soundList;
 	vector<soundType> soundTypes;
 	vector<LPCSTR> soundsToUse;
-
-
 };
 
 #endif
