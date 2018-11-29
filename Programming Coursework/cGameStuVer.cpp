@@ -88,7 +88,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	{
 		for (int j = 0; j < 9; j++)
 		{
-			blocks[i][j].setSpritePos({ (i * xPos)+55,(j*yPos)+55 });  // position the block according to i and j values
+			blocks[i][j].setSpritePos({ (i * xPos)+55,(j*yPos)+60 });  // position the block according to i and j values
 			
 			numberOfBlocks++;
 
@@ -159,8 +159,8 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theFontMgr->initFontLib();
 	//theSoundMgr->initMixer();
 
-	fontList = { "digital", "spaceAge" }; // create textures for text
-	fontsToUse = { "Fonts/digital-7.ttf", "Fonts/space age.ttf" };
+	fontList = { "ka1" }; // create textures for text
+	fontsToUse = { "Fonts/ka1.ttf" };  // https://www.dafont.com/karmatic-arcade.font
 	for (int fonts = 0; fonts < (int)fontList.size(); fonts++)
 	{
 		theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 36);
@@ -169,19 +169,19 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	strScore = gameTextList[1];
 	strScore += to_string(playerScore).c_str();
 	
-	theTextureMgr->addTexture("Title", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, gameTextList[0], textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
-	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
+	theTextureMgr->addTexture("Title", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, gameTextList[0], textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
+	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
 	theTextureMgr->addTexture("theBall", "Images\\ball.png"); // texture and position the ball on top of the paddle
 
 	ballSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("theBall")->getTWidth()) / 2)), (450-(theTextureMgr->getTexture("theBall")->getTHeight())) });
 	ballSprite.setTexture(theTextureMgr->getTexture("theBall"));
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBall")->getTWidth(), theTextureMgr->getTexture("theBall")->getTHeight());
 
-	LpromptSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("spacebar")->getTWidth()) / 2) - (theTextureMgr->getTexture("leftArrow")->getTWidth())), 350 });
+	LpromptSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("spacebar")->getTWidth())) - (theTextureMgr->getTexture("leftArrow")->getTWidth())), 350 });
 	LpromptSprite.setTexture(theTextureMgr->getTexture("leftArrow"));
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("leftArrow")->getTWidth(), theTextureMgr->getTexture("leftArrow")->getTHeight());
 
-	RpromptSprite.setSpritePos({ (375 + (theTextureMgr->getTexture("spacebar")->getTWidth()) / 2), 350 });
+	RpromptSprite.setSpritePos({ (375 + ((theTextureMgr->getTexture("spacebar")->getTWidth()) / 2) + theTextureMgr->getTexture("rightArrow")->getTWidth()), 350 });
 	RpromptSprite.setTexture(theTextureMgr->getTexture("rightArrow"));
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("rightArrow")->getTWidth(), theTextureMgr->getTexture("rightArrow")->getTHeight());
 	
@@ -256,7 +256,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theTextureMgr->deleteTexture("playerScore");
 	strScore = gameTextList[1];
 	strScore += to_string(playerScore).c_str();
-	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("spaceAge")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
+	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
 
 	cTexture* tempTextTexture1 = theTextureMgr->getTexture("Title");
 	cTexture* tempTextTexture2 = theTextureMgr->getTexture("playerScore");
