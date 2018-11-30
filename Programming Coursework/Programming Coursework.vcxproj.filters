@@ -57,6 +57,12 @@
     <ClInclude Include="cPrompts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cSound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cSoundMgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cBall.cpp">
@@ -96,6 +102,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cPrompts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cSound.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cSoundMgr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

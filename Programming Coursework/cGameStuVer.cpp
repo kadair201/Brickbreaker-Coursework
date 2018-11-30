@@ -8,11 +8,10 @@ cGame.cpp
 cGame* cGame::pInstance = NULL;
 static cTextureMgr* theTextureMgr = cTextureMgr::getInstance();
 static cFontMgr* theFontMgr = cFontMgr::getInstance();
+static cSoundMgr* theSoundMgr = cSoundMgr::getInstance();
 
 // controls the colours of the text
 Uint8 colourVal = 150;
-
-//static cSoundMgr* theSoundMgr = cSoundMgr::getInstance();
 
 /*
 =================================================================================
@@ -157,7 +156,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		
 	}
 	theFontMgr->initFontLib();
-	//theSoundMgr->initMixer();
+	theSoundMgr->initMixer();
 
 	fontList = { "ka1" }; // create textures for text
 	fontsToUse = { "Fonts/ka1.ttf" };  // https://www.dafont.com/karmatic-arcade.font
@@ -168,6 +167,17 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	gameTextList = { "Breakout!", "Score: " };
 	strScore = gameTextList[1];
 	strScore += to_string(playerScore).c_str();
+
+	// Load game sounds
+	soundList = { "theme", "click", "bounce" };
+	soundTypes = { soundType::music, soundType::sfx, soundType::sfx };
+	soundsToUse = { "Audio/BackgroundMusic.wav", "Audio/ClickSound.wav", "Audio/BounceSound.wav" };
+	for (unsigned int sounds = 0; sounds < soundList.size(); sounds++)
+	{
+		theSoundMgr->add(soundList[sounds], soundsToUse[sounds], soundTypes[sounds]);
+	}
+
+	theSoundMgr->getSnd("theme")->play(-1);
 	
 	theTextureMgr->addTexture("Title", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, gameTextList[0], textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
 	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
@@ -306,6 +316,7 @@ void cGame::update(double deltaTime)
 			{	
 				if (blocks[i][j].isActive) // if the block hasn't already been destroyed
 				{
+					theSoundMgr->getSnd("bounce")->play(0); // audio feedback
 					collidedBlocks.push_back(blocks[i][j]); // add the block to the list of collided blocks
 					playerScore += blocks[i][j].scoreValue; // add to the score, depending on the value (colour) of the block
 					blocks[i][j].isActive = false; // the block is now destroyed
@@ -319,6 +330,8 @@ void cGame::update(double deltaTime)
 	// repeat the process, this time checking for collisions between the ball and the paddle
 	if (ballSprite.collidedWith(&paddleBoundingBlock, &ballBoundingBlock)) 
 	{
+		theSoundMgr->getSnd("bounce")->play(0); // audio feedback
+
 		// find the centre of each sprite, plus their position on the screen
 		SDL_Point paddleCentre = paddleSprite.getSpriteCentre() + paddleSprite.getSpritePos();  
 		SDL_Point ballCentre = ballSprite.getSpriteCentre() + ballSprite.getSpritePos();
