@@ -56,6 +56,8 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	theTextureMgr->setRenderer(theRenderer);
 	theTextureMgr->addTexture("theBackground", "Images\\background.png"); // add textures from the images folder
+	theTextureMgr->addTexture("menuBackground", "Images\\menu.png");
+	theTextureMgr->addTexture("scoresBackground", "Images\\scores.png");
 	
 	spriteBkgd.setSpritePos({ 0, 0 });
 	spriteBkgd.setTexture(theTextureMgr->getTexture("theBackground"));
@@ -85,9 +87,9 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theTextureMgr->addTexture("rightArrow", "Images\\right.png");
 	theTextureMgr->addTexture("spacebar", "Images\\space.png");
 
-	btnNameList = { "exit_btn", "menu_btn", "play_btn", "score_btn" };
-	btnTexturesToUse = { "Images\\QuitButton.png", "Images\\MenuButton.png", "Images\\GoButton.png", "Images\\ScoresButton.png" };
-	btnPos = { { 400, 375 }, { 400, 300 }, { 400, 300 }, { 500, 500 }, { 400, 300 }, { 740, 500 }, { 400, 300 } };
+	btnNameList = { "play_btn", "score_btn", "exit_btn", "menu_btn" };
+	btnTexturesToUse = { "Images\\GoButton.png", "Images\\ScoresButton.png", "Images\\QuitButton.png", "Images\\MenuButton.png" };
+	btnPos = { { 500, 175 }, { 500, 250 }, { 500, 325 }, { 100, 400 }};
 	for (unsigned int bCount = 0; bCount < btnNameList.size(); bCount++)
 	{
 		theTextureMgr->addTexture(btnNameList[bCount], btnTexturesToUse[bCount]);
@@ -259,15 +261,17 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	{
 		case (gameState::menu):
 		{
+			spriteBkgd.setTexture(theTextureMgr->getTexture("menuBackground"));
 			spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 			theButtonMgr->getBtn("play_btn")->render(theRenderer, &theButtonMgr->getBtn("play_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("play_btn")->getSpritePos(), theButtonMgr->getBtn("play_btn")->getSpriteScale());
+			theButtonMgr->getBtn("score_btn")->render(theRenderer, &theButtonMgr->getBtn("score_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("score_btn")->getSpritePos(), theButtonMgr->getBtn("score_btn")->getSpriteScale());
 			theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
-
 		}
 		break;
 
 		case (gameState::playing):
 		{
+			spriteBkgd.setTexture(theTextureMgr->getTexture("theBackground"));
 			spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 			paddleSprite.render(theRenderer, &paddleSprite.getSpriteDimensions(), &paddleSprite.getSpritePos(), NULL, &paddleSprite.getSpriteCentre(), paddleSprite.getSpriteScale());
 			ballSprite.render(theRenderer, &ballSprite.getSpriteDimensions(), &ballSprite.getSpritePos(), NULL, &ballSprite.getSpriteCentre(), ballSprite.getSpriteScale());
@@ -312,9 +316,16 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		}
 		break;
 
+		case gameState::scores:
+		{
+			spriteBkgd.setTexture(theTextureMgr->getTexture("scoresBackground"));
+			spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
+			theButtonMgr->getBtn("menu_btn")->render(theRenderer, &theButtonMgr->getBtn("menu_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("menu_btn")->getSpritePos(), theButtonMgr->getBtn("menu_btn")->getSpriteScale());
+		}
+		break;
+
 		case gameState::end:
 		{
-
 		}
 		break;
 			
@@ -345,14 +356,14 @@ void cGame::update(double deltaTime)
 	if (theGameState == gameState::menu || theGameState == gameState::end)
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, gameState::quit, theAreaClicked);
-		theGameState = theButtonMgr->getBtn("play_btn")->update(theGameState, gameState::playing, theAreaClicked);
 	}
 	else
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, gameState::end, theAreaClicked);
 	}
-	
+	theGameState = theButtonMgr->getBtn("play_btn")->update(theGameState, gameState::playing, theAreaClicked);
 	theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, gameState::menu, theAreaClicked);
+	theGameState = theButtonMgr->getBtn("score_btn")->update(theGameState, gameState::scores, theAreaClicked);
 
 	paddleSprite.update(deltaTime); // call the update methods of paddle/ball scripts to allow continuous movement
 	ballSprite.update(deltaTime);
@@ -526,7 +537,6 @@ bool cGame::getInput(bool theLoop)
 			case SDL_BUTTON_LEFT:
 			{
 				theAreaClicked = { event.motion.x, event.motion.y };
-				cout << theAreaClicked.x << " " << theAreaClicked.y << endl;
 			}
 			break;
 			case SDL_BUTTON_RIGHT:
@@ -562,7 +572,6 @@ bool cGame::getInput(bool theLoop)
 				{
 					ballSprite.isGoingLeft = false;
 				}
-				theSoundMgr->getSnd("click")->play(0);
 				break;
 
 			case SDLK_RIGHT:
@@ -571,7 +580,6 @@ bool cGame::getInput(bool theLoop)
 				{
 					ballSprite.isGoingRight = false;
 				}
-				theSoundMgr->getSnd("click")->play(0);
 				break;
 
 			default:
