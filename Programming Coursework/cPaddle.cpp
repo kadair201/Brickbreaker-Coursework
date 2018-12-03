@@ -26,7 +26,7 @@ Paddle Movement
 
 void cPaddle::update(double deltaTime)
 {
-	SDL_Rect currentPos = this->getSpritePos();
+	SDL_Point currentPos = { this->getSpritePos().x, this->getSpritePos().y };
 		
 	int moveSpeed = 12;
 

@@ -15,6 +15,8 @@
 #include "cSound.h"
 #include "cSoundMgr.h"
 #include "cPrompts.h"
+#include "cButton.h"
+#include "cButtonMgr.h"
 
 
 

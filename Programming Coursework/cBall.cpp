@@ -13,11 +13,12 @@ void cBall::initialise()
 	isMoving = false;
 	cout << isMoving;
 	setBoundingRect();
+	radius = 10;
 }
 
 void cBall::update(double deltaTime)
 {
-	SDL_Rect currentPos = this->getSpritePos();
+	SDL_Point currentPos = { this->getSpritePos().x, this->getSpritePos().y };
 
 	if (isMoving) 
 	{

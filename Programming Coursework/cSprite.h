@@ -40,7 +40,7 @@ public:
 	void render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, FPoint theScaling);
 	void render(SDL_Renderer* theRenderer, SDL_Rect* theSourceRect, SDL_Rect* theDestRect, double rotAngle, SDL_Point* spriteCentre, FPoint theScaling);
 	SDL_Rect getSpritePos();  // Return the sprites current position
-	void setSpritePos(SDL_Rect sPosition); // set the position of the sprite
+	void setSpritePos(SDL_Point sPosition); // set the position of the sprite
 	cTexture* getTexture();  // Return the sprites current image
 	void setTexture(cTexture* theSpriteTexture);  // set the image of the sprite
 	void setSpriteDimensions(int texWidth, int textHeight);

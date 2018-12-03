@@ -64,6 +64,19 @@ private:
 	vector<LPCSTR> soundList;
 	vector<soundType> soundTypes;
 	vector<LPCSTR> soundsToUse;
+	// Create vector array of button textures
+	vector<LPCSTR> btnNameList;
+	vector<LPCSTR> btnTexturesToUse;
+	vector<SDL_Point> btnPos;
+	vector <cButton> theButtons;
+	// Game objects
+	int renderWidth, renderHeight;
+	gameState theGameState;
+	btnTypes theBtnType;
+	SDL_Rect pos;
+	FPoint scale;
+	cTexture* tempTextTexture;
+	SDL_Point theAreaClicked;
 };
 
 #endif

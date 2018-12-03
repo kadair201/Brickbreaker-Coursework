@@ -9,6 +9,8 @@ cGame* cGame::pInstance = NULL;
 static cTextureMgr* theTextureMgr = cTextureMgr::getInstance();
 static cFontMgr* theFontMgr = cFontMgr::getInstance();
 static cSoundMgr* theSoundMgr = cSoundMgr::getInstance();
+static cButtonMgr* theButtonMgr = cButtonMgr::getInstance();
+
 
 // controls the colours of the text
 Uint8 colourVal = 150;
@@ -82,6 +84,24 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theTextureMgr->addTexture("leftArrow", "Images\\left.png");
 	theTextureMgr->addTexture("rightArrow", "Images\\right.png");
 	theTextureMgr->addTexture("spacebar", "Images\\space.png");
+
+	btnNameList = { "exit_btn", "menu_btn", "play_btn", "score_btn" };
+	btnTexturesToUse = { "Images\\QuitButton.png", "Images\\MenuButton.png", "Images\\GoButton.png", "Images\\ScoresButton.png" };
+	btnPos = { { 400, 375 }, { 400, 300 }, { 400, 300 }, { 500, 500 }, { 400, 300 }, { 740, 500 }, { 400, 300 } };
+	for (unsigned int bCount = 0; bCount < btnNameList.size(); bCount++)
+	{
+		theTextureMgr->addTexture(btnNameList[bCount], btnTexturesToUse[bCount]);
+	}
+	for (unsigned int bCount = 0; bCount < btnNameList.size(); bCount++)
+	{
+		cButton * newBtn = new cButton();
+		newBtn->setTexture(theTextureMgr->getTexture(btnNameList[bCount]));
+		newBtn->setSpritePos(btnPos[bCount]);
+		newBtn->setSpriteDimensions(theTextureMgr->getTexture(btnNameList[bCount])->getTWidth(), theTextureMgr->getTexture(btnNameList[bCount])->getTHeight());
+		theButtonMgr->add(btnNameList[bCount], newBtn);
+	}
+	theGameState = gameState::menu;
+	theBtnType = btnTypes::exit;
 	
 	for (int i = 0; i < 16; i++) // for each block in the 16x9 array 
 	{
@@ -234,47 +254,72 @@ Render
 void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
 	SDL_RenderClear(theRenderer);
-	spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
-	paddleSprite.render(theRenderer, &paddleSprite.getSpriteDimensions(), &paddleSprite.getSpritePos(), NULL, &paddleSprite.getSpriteCentre(), paddleSprite.getSpriteScale());
-	ballSprite.render(theRenderer, &ballSprite.getSpriteDimensions(), &ballSprite.getSpritePos(), NULL, &ballSprite.getSpriteCentre(), ballSprite.getSpriteScale());
 
-	if (!(paddleSprite.hasMoved))
+	switch (theGameState)
 	{
-		LpromptSprite.render(theRenderer, &LpromptSprite.getSpriteDimensions(), &LpromptSprite.getSpritePos(), NULL, &LpromptSprite.getSpriteCentre(), LpromptSprite.getSpriteScale());
-	}
+		case (gameState::menu):
+		{
+			spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
+			theButtonMgr->getBtn("play_btn")->render(theRenderer, &theButtonMgr->getBtn("play_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("play_btn")->getSpritePos(), theButtonMgr->getBtn("play_btn")->getSpriteScale());
+			theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
 
-	if (!(paddleSprite.hasMoved))
-	{
-		RpromptSprite.render(theRenderer, &RpromptSprite.getSpriteDimensions(), &RpromptSprite.getSpritePos(), NULL, &RpromptSprite.getSpriteCentre(), RpromptSprite.getSpriteScale());
-	}
+		}
+		break;
 
-	if (!(ballSprite.isMoving))
-	{
-		SpromptSprite.render(theRenderer, &SpromptSprite.getSpriteDimensions(), &SpromptSprite.getSpritePos(), NULL, &SpromptSprite.getSpriteCentre(), SpromptSprite.getSpriteScale());
+		case (gameState::playing):
+		{
+			spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
+			paddleSprite.render(theRenderer, &paddleSprite.getSpriteDimensions(), &paddleSprite.getSpritePos(), NULL, &paddleSprite.getSpriteCentre(), paddleSprite.getSpriteScale());
+			ballSprite.render(theRenderer, &ballSprite.getSpriteDimensions(), &ballSprite.getSpritePos(), NULL, &ballSprite.getSpriteCentre(), ballSprite.getSpriteScale());
+
+			if (!(paddleSprite.hasMoved))
+			{
+				LpromptSprite.render(theRenderer, &LpromptSprite.getSpriteDimensions(), &LpromptSprite.getSpritePos(), NULL, &LpromptSprite.getSpriteCentre(), LpromptSprite.getSpriteScale());
+			}
+
+			if (!(paddleSprite.hasMoved))
+			{
+				RpromptSprite.render(theRenderer, &RpromptSprite.getSpriteDimensions(), &RpromptSprite.getSpritePos(), NULL, &RpromptSprite.getSpriteCentre(), RpromptSprite.getSpriteScale());
+			}
+
+			if (!(ballSprite.isMoving))
+			{
+				SpromptSprite.render(theRenderer, &SpromptSprite.getSpriteDimensions(), &SpromptSprite.getSpritePos(), NULL, &SpromptSprite.getSpriteCentre(), SpromptSprite.getSpriteScale());
+			}
+
+			for (int i = 0; i < 16; i++)
+			{
+				for (int j = 0; j < 9; j++)
+				{
+					if (blocks[i][j].isActive)
+					{
+						blocks[i][j].render(theRenderer, &blocks[i][j].getSpriteDimensions(), &blocks[i][j].getSpritePos(), NULL, &blocks[i][j].getSpriteCentre(), blocks[i][j].getSpriteScale());
+					}
+				}
+			}
+			theTextureMgr->deleteTexture("playerScore");
+			strScore = gameTextList[1];
+			strScore += to_string(playerScore).c_str();
+			theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
+
+			cTexture* tempTextTexture1 = theTextureMgr->getTexture("Title");
+			cTexture* tempTextTexture2 = theTextureMgr->getTexture("playerScore");
+			SDL_Rect pos1 = { 10, 10, tempTextTexture1->getTextureRect().w, tempTextTexture1->getTextureRect().h };
+			SDL_Rect pos2 = { (740 - tempTextTexture2->getTextureRect().w), 10, tempTextTexture2->getTextureRect().w, tempTextTexture2->getTextureRect().h };
+			FPoint scale = { 1,1 };
+			tempTextTexture1->renderTexture(theRenderer, tempTextTexture1->getTexture(), &tempTextTexture1->getTextureRect(), &pos1, scale);
+			tempTextTexture2->renderTexture(theRenderer, tempTextTexture2->getTexture(), &tempTextTexture2->getTextureRect(), &pos2, scale);
+		}
+		break;
+
+		case gameState::end:
+		{
+
+		}
+		break;
+			
 	}
 	
-	for (int i = 0; i < 16; i++)
-	{
-		for (int j = 0; j < 9; j++)
-		{
-			if (blocks[i][j].isActive)
-			{
-				blocks[i][j].render(theRenderer, &blocks[i][j].getSpriteDimensions(), &blocks[i][j].getSpritePos(), NULL, &blocks[i][j].getSpriteCentre(), blocks[i][j].getSpriteScale());
-			}
-		}
-	}
-	theTextureMgr->deleteTexture("playerScore");
-	strScore = gameTextList[1];
-	strScore += to_string(playerScore).c_str();
-	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
-
-	cTexture* tempTextTexture1 = theTextureMgr->getTexture("Title");
-	cTexture* tempTextTexture2 = theTextureMgr->getTexture("playerScore");
-	SDL_Rect pos1 = { 10, 10, tempTextTexture1->getTextureRect().w, tempTextTexture1->getTextureRect().h };
-	SDL_Rect pos2 = {(740-tempTextTexture2->getTextureRect().w), 10, tempTextTexture2->getTextureRect().w, tempTextTexture2->getTextureRect().h };
-	FPoint scale = { 1,1 };
-	tempTextTexture1->renderTexture(theRenderer, tempTextTexture1->getTexture(), &tempTextTexture1->getTextureRect(), &pos1, scale);
-	tempTextTexture2->renderTexture(theRenderer, tempTextTexture2->getTexture(), &tempTextTexture2->getTextureRect(), &pos2, scale);
 	SDL_RenderPresent(theRenderer);
 }
 
@@ -297,10 +342,20 @@ Update
 
 void cGame::update(double deltaTime)
 {
+	if (theGameState == gameState::menu || theGameState == gameState::end)
+	{
+		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, gameState::quit, theAreaClicked);
+		theGameState = theButtonMgr->getBtn("play_btn")->update(theGameState, gameState::playing, theAreaClicked);
+	}
+	else
+	{
+		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, gameState::end, theAreaClicked);
+	}
 	
+	theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, gameState::menu, theAreaClicked);
+
 	paddleSprite.update(deltaTime); // call the update methods of paddle/ball scripts to allow continuous movement
 	ballSprite.update(deltaTime);
-
 	
 	vector<cBlock> collidedBlocks; // vector (list) of collided blocks, in case the ball hits more than one
 
@@ -347,7 +402,7 @@ void cGame::update(double deltaTime)
 			if (pushBackIterations > 100) continue;
 
 			SDL_Point entryDirectionStep = entryDirection / 5;  // move back a little bit
-			SDL_Rect ballPos = ballSprite.getSpritePos();
+			SDL_Point ballPos = { ballSprite.getSpritePos().x,ballSprite.getSpritePos().y };
 
 			ballPos.x -= entryDirectionStep.x;
 			ballPos.y -= entryDirectionStep.y;
@@ -413,8 +468,7 @@ void cGame::update(double deltaTime)
 			if (pushBackIterations > 100) continue;
 
 			SDL_Point entryDirectionStep = entryDirection / 5; // move back a little bit
-
-			SDL_Rect ballPos = ballSprite.getSpritePos();
+			SDL_Point ballPos = { ballSprite.getSpritePos().x,ballSprite.getSpritePos().y };
 
 			ballPos.x -= entryDirectionStep.x;
 			ballPos.y -= entryDirectionStep.y;
@@ -464,6 +518,40 @@ bool cGame::getInput(bool theLoop)
 			theLoop = false;
 		}
 
+		switch (event.type)
+		{
+		case SDL_MOUSEBUTTONDOWN:
+			switch (event.button.button)
+			{
+			case SDL_BUTTON_LEFT:
+			{
+				theAreaClicked = { event.motion.x, event.motion.y };
+				cout << theAreaClicked.x << " " << theAreaClicked.y << endl;
+			}
+			break;
+			case SDL_BUTTON_RIGHT:
+				break;
+			default:
+				break;
+			}
+			break;
+		case SDL_MOUSEBUTTONUP:
+			switch (event.button.button)
+			{
+			case SDL_BUTTON_LEFT:
+			{
+			}
+			break;
+			case SDL_BUTTON_RIGHT:
+				break;
+			default:
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+
 		if (event.type == SDL_KEYUP)
 		{
 			switch (event.key.keysym.sym) {
@@ -474,6 +562,7 @@ bool cGame::getInput(bool theLoop)
 				{
 					ballSprite.isGoingLeft = false;
 				}
+				theSoundMgr->getSnd("click")->play(0);
 				break;
 
 			case SDLK_RIGHT:
@@ -482,6 +571,7 @@ bool cGame::getInput(bool theLoop)
 				{
 					ballSprite.isGoingRight = false;
 				}
+				theSoundMgr->getSnd("click")->play(0);
 				break;
 
 			default:
@@ -520,6 +610,7 @@ bool cGame::getInput(bool theLoop)
 
 			case SDLK_SPACE:
 				ballSprite.isMoving = true;
+				theSoundMgr->getSnd("click")->play(0);
 				cout << ballSprite.isMoving;
 				break;
 

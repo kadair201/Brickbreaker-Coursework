@@ -56,12 +56,10 @@ SDL_Rect cSprite::getSpritePos()  // Return the sprites current position
 =================
 */
 
-void cSprite::setSpritePos(SDL_Rect sPosition)  // set the position of the sprite
+void cSprite::setSpritePos(SDL_Point sPosition)  // set the position of the sprite
 {
 	this->spritePos_2D.x = sPosition.x;
 	this->spritePos_2D.y = sPosition.y;
-	this->spritePos_2D.w = sPosition.w;
-	this->spritePos_2D.h = sPosition.h;
 }
 
 /*

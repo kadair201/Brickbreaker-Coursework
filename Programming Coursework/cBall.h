@@ -10,6 +10,7 @@ public:
 	bool isMoving;
 	bool isGoingLeft;
 	bool isGoingRight;
+	int radius;
 
 	void initialise();		// Default render function
 	void update(double deltaTime);		// ball update method
