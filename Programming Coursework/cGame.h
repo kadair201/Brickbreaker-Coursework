@@ -77,6 +77,8 @@ private:
 	FPoint scale;
 	cTexture* tempTextTexture;
 	SDL_Point theAreaClicked;
+	bool loop;
+	void resetGame();
 };
 
 #endif

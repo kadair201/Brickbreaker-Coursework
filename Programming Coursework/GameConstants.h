@@ -71,7 +71,7 @@ inline SDL_Point operator*(SDL_Point const &a, int const &b)
 
 enum class textType { solid, blended, shaded };
 enum class soundType { sfx, music };
-enum class gameState { menu, scores, playing, end, quit };
+enum class gameState { menu, scores, playing, exit, end };
 enum class btnTypes { menu, scores, play, exit };
 
 #endif

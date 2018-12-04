@@ -18,6 +18,4 @@
 #include "cButton.h"
 #include "cButtonMgr.h"
 
-
-
 #endif

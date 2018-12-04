@@ -76,11 +76,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2-2.0.4\include;C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_ttf-2.0.14\include;C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_mixer-2.0.1\include;C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_image-2.0.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_image-2.0.1\include;C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_mixer-2.0.1\include;C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_ttf-2.0.14\include;C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2-2.0.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2-2.0.4\lib\x86;C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_ttf-2.0.14\lib\x86;C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_mixer-2.0.1\lib\x86;C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_image-2.0.1\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_image-2.0.1\lib\x86;C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_ttf-2.0.14\lib\x86;C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_mixer-2.0.1\lib\x86;C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2-2.0.4\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
@@ -110,13 +110,13 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2-2.0.4\include;C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_ttf-2.0.14\include;C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_mixer-2.0.1\include;C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_image-2.0.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_image-2.0.1\include;C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_mixer-2.0.1\include;C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_ttf-2.0.14\include;C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2-2.0.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2-2.0.4\lib\x86;C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_ttf-2.0.14\lib\x86;C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_mixer-2.0.1\lib\x86;C:\Users\kirst\OneDrive\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_image-2.0.1\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_image-2.0.1\lib\x86;C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_ttf-2.0.14\lib\x86;C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2_mixer-2.0.1\lib\x86;C:\Users\quack\Desktop\Coursework\Programming Coursework\Programming Coursework\SDL2\SDL2-2.0.4\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
