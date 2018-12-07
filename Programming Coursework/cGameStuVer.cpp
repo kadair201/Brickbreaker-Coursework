@@ -53,6 +53,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	this->m_lastTime = high_resolution_clock::now();
 
 	playerScore = 0;  // reset score
+	highScore = 3000;
 
 	theTextureMgr->setRenderer(theRenderer);
 	theTextureMgr->addTexture("theBackground", "Images\\background.png"); // add textures from the images folder
@@ -89,9 +90,9 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theTextureMgr->addTexture("rightArrow", "Images\\right.png");
 	theTextureMgr->addTexture("spacebar", "Images\\space.png");
 
-	btnNameList = { "play_btn", "scores_btn", "quit_btn", "menu_btn" };
-	btnTexturesToUse = { "Images\\GoButton.png", "Images\\ScoresButton.png", "Images\\QuitButton.png", "Images\\MenuButton.png" };
-	btnPos = { { 500, 175 }, { 500, 250 }, { 500, 325 }, { 100, 400 }};
+	btnNameList = { "play_btn", "scores_btn", "quit_btn", "menu_btn", "replay_btn" };
+	btnTexturesToUse = { "Images\\GoButton.png", "Images\\ScoresButton.png", "Images\\QuitButton.png", "Images\\MenuButton.png", "Images\\ReplayButton.png" };
+	btnPos = { { 500, 250 }, { 500, 325 }, { 500, 400 }, { 100, 400 }, {150,400} };
 	for (unsigned int bCount = 0; bCount < btnNameList.size(); bCount++)
 	{
 		theTextureMgr->addTexture(btnNameList[bCount], btnTexturesToUse[bCount]);
@@ -188,7 +189,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	{
 		theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 36);
 	}
-	gameTextList = { "Breakout!", "Score: " };
+	gameTextList = { "Breakout!", "Score: ", "High score: " };
 	strScore = gameTextList[1];
 	strScore += to_string(playerScore).c_str();
 
@@ -205,6 +206,8 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	
 	theTextureMgr->addTexture("Title", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, gameTextList[0], textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
 	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
+
+
 	theTextureMgr->addTexture("theBall", "Images\\ball.png"); // texture and position the ball on top of the paddle
 
 	ballSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("theBall")->getTWidth()) / 2)), (450-(theTextureMgr->getTexture("theBall")->getTHeight())) });
@@ -332,25 +335,22 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 			{
 				spriteBkgd.setTexture(theTextureMgr->getTexture("winBackground"));
 				spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
-
-				theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
-				cTexture* tempTextTexture = theTextureMgr->getTexture("playerScore");
-				SDL_Rect pos = { (700 - tempTextTexture->getTextureRect().w), 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
-				FPoint scale = { 1,1 };
-				tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 			}
 			else 
 			{
 				spriteBkgd.setTexture(theTextureMgr->getTexture("loseBackground"));
 				spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
-
-				theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
-				cTexture* tempTextTexture = theTextureMgr->getTexture("playerScore");
-				SDL_Rect pos = { (700 - tempTextTexture->getTextureRect().w), 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
-				FPoint scale = { 1,1 };
-				tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 			}
 			
+			theButtonMgr->getBtn("replay_btn")->render(theRenderer, &theButtonMgr->getBtn("replay_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("replay_btn")->getSpritePos(), theButtonMgr->getBtn("replay_btn")->getSpriteScale());
+			theButtonMgr->getBtn("quit_btn")->render(theRenderer, &theButtonMgr->getBtn("quit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("quit_btn")->getSpritePos(), theButtonMgr->getBtn("quit_btn")->getSpriteScale());
+
+			theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
+			cTexture* tempTextTexture = theTextureMgr->getTexture("playerScore");
+			SDL_Rect pos = { (700 - tempTextTexture->getTextureRect().w), 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+			FPoint scale = { 1,1 };
+			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+
 		}
 		break;
 	}
@@ -395,6 +395,7 @@ void cGame::update(double deltaTime)
 
 	case gameState::playing:
 	{
+
 		paddleSprite.update(deltaTime); // call the update methods of paddle/ball scripts to allow continuous movement
 		ballSprite.update(deltaTime);
 
@@ -544,24 +545,27 @@ void cGame::update(double deltaTime)
 					ballSprite.yVelocity *= -1;
 				}
 			}
+			
+		}
+		// check if the player has won
+		if (playerScore >= 7200)
+		{
+			theGameState = gameState::end;
+		}
 
-			// check if the player has won
-			if (playerScore >= 7200) 
-			{
-				theGameState = gameState::end;
-			}
-
-			if ((ballSprite.getSpritePos().y) >= 480) 
-			{
-				theGameState = gameState::end;
-			}
+		if (ballSprite.outOfBounds)
+		{
+			theGameState = gameState::end;
 		}
 	}
 	break;
 
 	case gameState::end:
 	{
+		theGameState = theButtonMgr->getBtn("replay_btn")->update(theGameState, gameState::playing, theAreaClicked);
+		theGameState = theButtonMgr->getBtn("quit_btn")->update(theGameState, gameState::exit, theAreaClicked);
 
+		if (theGameState == gameState::playing) resetGame();
 	}
 	break;
 
@@ -571,7 +575,7 @@ void cGame::update(double deltaTime)
 	}
 	break;
 	}
-	
+
 }
 
 bool cGame::getInput(bool theLoop)
@@ -584,6 +588,8 @@ bool cGame::getInput(bool theLoop)
 		{
 			theLoop = false;
 		}
+		
+		theAreaClicked = { 0,0 }; // set areaclicked back to nothing first otherwise a mouse click will persist after the update
 
 		switch (event.type)
 		{
@@ -592,6 +598,7 @@ bool cGame::getInput(bool theLoop)
 			{
 			case SDL_BUTTON_LEFT:
 			{
+				theSoundMgr->getSnd("click")->play(0);
 				theAreaClicked = { event.motion.x, event.motion.y };
 			}
 			break;
@@ -678,6 +685,7 @@ bool cGame::getInput(bool theLoop)
 				cout << ballSprite.isMoving;
 				break;
 
+				// "cheat" for testing end screens
 			case SDLK_q:
 				playerScore = 7200;
 				break;
@@ -704,6 +712,91 @@ double cGame::getElapsedSeconds()
 void cGame::resetGame()
 {
 	playerScore = 0;
+
+	paddleSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("thePaddle")->getTWidth()) / 2)), 450 });
+	paddleSprite.setTexture(theTextureMgr->getTexture("thePaddle"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("thePaddle")->getTWidth(), theTextureMgr->getTexture("thePaddle")->getTHeight());
+	ballSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("theBall")->getTWidth()) / 2)), (450 - (theTextureMgr->getTexture("theBall")->getTHeight())) });
+	ballSprite.setTexture(theTextureMgr->getTexture("theBall"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBall")->getTWidth(), theTextureMgr->getTexture("theBall")->getTHeight());
+
+	ballSprite.outOfBounds = false;
+	ballSprite.isMoving = false;
+
+	int xPos = 40; // declare variables representing the size of each block
+	int yPos = 20;
+
+	for (int i = 0; i < 16; i++) // for each block in the 16x9 array 
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			blocks[i][j].setSpritePos({ (i * xPos) + 55,(j*yPos) + 60 });  // position the block according to i and j values
+
+			numberOfBlocks++;
+
+			// switch statement to determine which colour is assigned to the block, depending on the row (j)
+			// each colour has a different score value
+			switch (j)
+			{
+			case 0:
+			{
+				blocks[i][j].setTexture(theTextureMgr->getTexture("theRedBlock"));
+				blocks[i][j].scoreValue = 90;
+			}
+			break;
+			case 1:
+			{
+				blocks[i][j].setTexture(theTextureMgr->getTexture("theOrangeBlock"));
+				blocks[i][j].scoreValue = 80;
+			}
+			break;
+			case 2:
+			{
+				blocks[i][j].setTexture(theTextureMgr->getTexture("theYellowBlock"));
+				blocks[i][j].scoreValue = 70;
+			}
+			break;
+			case 3:
+			{
+				blocks[i][j].setTexture(theTextureMgr->getTexture("theGreenBlock"));
+				blocks[i][j].scoreValue = 60;
+			}
+			break;
+			case 4:
+			{
+				blocks[i][j].setTexture(theTextureMgr->getTexture("theBlueBlock"));
+				blocks[i][j].scoreValue = 50;
+			}
+			break;
+			case 5:
+			{
+				blocks[i][j].setTexture(theTextureMgr->getTexture("theDarkBlueBlock"));
+				blocks[i][j].scoreValue = 40;
+			}
+			break;
+			case 6:
+			{
+				blocks[i][j].setTexture(theTextureMgr->getTexture("thePurpleBlock"));
+				blocks[i][j].scoreValue = 30;
+			}
+			break;
+			case 7:
+			{
+				blocks[i][j].setTexture(theTextureMgr->getTexture("thePinkBlock"));
+				blocks[i][j].scoreValue = 20;
+			}
+			break;
+			case 8:
+			{
+				blocks[i][j].setTexture(theTextureMgr->getTexture("theMagentaBlock"));
+				blocks[i][j].scoreValue = 10;
+			}
+			break;
+			}
+			blocks[i][j].initialise(); // set the bounding rectangle for each block from cBlock
+
+		}
+	}
 }
 
 

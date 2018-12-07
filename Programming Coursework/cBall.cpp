@@ -11,6 +11,7 @@ void cBall::initialise()
 	xVelocity = -1;
 	yVelocity = 1;
 	isMoving = false;
+	outOfBounds = false;
 	cout << isMoving;
 	setBoundingRect();
 	radius = 10;
@@ -48,7 +49,7 @@ void cBall::update(double deltaTime)
 		}
 		else
 		{
-			yVelocity = 1;
+			outOfBounds = true;
 		}
 
 		if (currentPos.y > 0) {

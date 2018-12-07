@@ -78,6 +78,8 @@ private:
 	cTexture* tempTextTexture;
 	SDL_Point theAreaClicked;
 	bool loop;
+	bool playingAgain;
+	int highScore;
 	void resetGame();
 };
 

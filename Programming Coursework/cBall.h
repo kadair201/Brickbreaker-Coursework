@@ -10,6 +10,7 @@ public:
 	bool isMoving;
 	bool isGoingLeft;
 	bool isGoingRight;
+	bool outOfBounds;
 	int radius;
 
 	void initialise();		// Default render function
