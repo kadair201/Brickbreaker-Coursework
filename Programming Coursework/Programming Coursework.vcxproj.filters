@@ -69,6 +69,12 @@
     <ClInclude Include="cButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cHighScoreMgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cXInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cBall.cpp">
@@ -120,6 +126,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cButtonMgr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cHighScoreMgr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cXInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

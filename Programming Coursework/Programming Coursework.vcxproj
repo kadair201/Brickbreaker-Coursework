@@ -88,6 +88,7 @@
 xcopy /Y "$(ProjectDir)Audio\*.*" "$(OutDir)Audio\"
 xcopy /Y "$(ProjectDir)Images\*.*" "$(OutDir)Images\"
 xcopy /Y "$(ProjectDir)Fonts\*.*" "$(OutDir)Fonts\"
+xcopy /Y "$(ProjectDir)Data\*.*" "$(OutDir)Data\"
 xcopy /Y "SDL2\SDL2-2.0.4\lib\x86\SDL2.dll" "$(OutDir)"
 xcopy /Y "SDL2\SDL2_image-2.0.1\lib\x86\*.dll" "$(OutDir)"
 xcopy /Y "SDL2\SDL2_ttf-2.0.14\lib\x86\*.dll" "$(OutDir)"
@@ -124,6 +125,7 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
 xcopy /Y "$(ProjectDir)Audio\*.*" "$(OutDir)Audio\"
 xcopy /Y "$(ProjectDir)Images\*.*" "$(OutDir)Images\"
 xcopy /Y "$(ProjectDir)Fonts\*.*" "$(OutDir)Fonts\"
+xcopy /Y "$(ProjectDir)Data\*.*" "$(OutDir)Data\"
 xcopy /Y "SDL2\SDL2-2.0.4\lib\x86\SDL2.dll" "$(OutDir)"
 xcopy /Y "SDL2\SDL2_image-2.0.1\lib\x86\*.dll" "$(OutDir)"
 xcopy /Y "SDL2\SDL2_ttf-2.0.14\lib\x86\*.dll" "$(OutDir)"
@@ -153,6 +155,7 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="cButtonMgr.h" />
     <ClInclude Include="cFontMgr.h" />
     <ClInclude Include="cGame.h" />
+    <ClInclude Include="cHighScoreMgr.h" />
     <ClInclude Include="cPaddle.h" />
     <ClInclude Include="cPrompts.h" />
     <ClInclude Include="cSDL2WNDManager.h" />
@@ -161,6 +164,7 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="cSprite.h" />
     <ClInclude Include="cTexture.h" />
     <ClInclude Include="cTextureMgr.h" />
+    <ClInclude Include="cXInput.h" />
     <ClInclude Include="GameConstants.h" />
     <ClInclude Include="cFont.h" />
   </ItemGroup>
@@ -173,6 +177,7 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="cFont.cpp" />
     <ClCompile Include="cFontMgr.cpp" />
     <ClCompile Include="cGameStuVer.cpp" />
+    <ClCompile Include="cHighScoreMgr.cpp" />
     <ClCompile Include="cPaddle.cpp" />
     <ClCompile Include="cPrompts.cpp" />
     <ClCompile Include="cSDL2WNDManager.cpp" />
@@ -181,6 +186,7 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="cSprite.cpp" />
     <ClCompile Include="cTexture.cpp" />
     <ClCompile Include="cTextureMgr.cpp" />
+    <ClCompile Include="cXInput.cpp" />
     <ClCompile Include="PaddlesSDL.cpp" />
   </ItemGroup>
   <ItemGroup>

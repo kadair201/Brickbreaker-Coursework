@@ -10,6 +10,8 @@ static cTextureMgr* theTextureMgr = cTextureMgr::getInstance();
 static cFontMgr* theFontMgr = cFontMgr::getInstance();
 static cSoundMgr* theSoundMgr = cSoundMgr::getInstance();
 static cButtonMgr* theButtonMgr = cButtonMgr::getInstance();
+static cHighScoreMgr* theHighScoreMgr = cHighScoreMgr::getInstance();
+static cXInput* theXInput = cXInput::getInstance();
 
 
 // controls the colours of the text
@@ -46,14 +48,14 @@ Initialisation
 
 void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
-	
 	SDL_SetRenderDrawColor(theRenderer, 0, 0, 0, 255); // Clear the buffer with a black background
 	SDL_RenderPresent(theRenderer);
 
 	this->m_lastTime = high_resolution_clock::now();
 
 	playerScore = 0;  // reset score
-	highScore = 3000;
+
+	theXInput->CheckController();
 
 	theTextureMgr->setRenderer(theRenderer);
 	theTextureMgr->addTexture("theBackground", "Images\\background.png"); // add textures from the images folder
@@ -61,6 +63,8 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theTextureMgr->addTexture("scoresBackground", "Images\\scores.png");
 	theTextureMgr->addTexture("winBackground", "Images\\winScreen.png");
 	theTextureMgr->addTexture("loseBackground", "Images\\loseScreen.png");
+	theTextureMgr->addTexture("controllerConnected", "Images\\controllerConnected.png");
+	theTextureMgr->addTexture("controllerNotConnected", "Images\\controllerNotConnected.png");
 	
 	spriteBkgd.setSpritePos({ 0, 0 });
 	spriteBkgd.setTexture(theTextureMgr->getTexture("theBackground"));
@@ -92,7 +96,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	btnNameList = { "play_btn", "scores_btn", "quit_btn", "menu_btn", "replay_btn" };
 	btnTexturesToUse = { "Images\\GoButton.png", "Images\\ScoresButton.png", "Images\\QuitButton.png", "Images\\MenuButton.png", "Images\\ReplayButton.png" };
-	btnPos = { { 500, 250 }, { 500, 325 }, { 500, 400 }, { 100, 400 }, {150,400} };
+	btnPos = { { 500, 250 }, { 500, 325 }, { 500, 400 }, { 10, 400 }, {250,400} };
 	for (unsigned int bCount = 0; bCount < btnNameList.size(); bCount++)
 	{
 		theTextureMgr->addTexture(btnNameList[bCount], btnTexturesToUse[bCount]);
@@ -189,7 +193,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	{
 		theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 36);
 	}
-	gameTextList = { "Breakout!", "Score: ", "High score: " };
+	gameTextList = { "Breakout!", "Score: " };
 	strScore = gameTextList[1];
 	strScore += to_string(playerScore).c_str();
 
@@ -206,10 +210,11 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	
 	theTextureMgr->addTexture("Title", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, gameTextList[0], textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
 	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
-
+	theTextureMgr->addTexture("score1", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, "score1", textType::solid, { 0,0,0,225 }, { 0,0,0,0 }));
+	theTextureMgr->addTexture("score2", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, "score2", textType::solid, { 0,0,0,225 }, { 0,0,0,0 }));
+	theTextureMgr->addTexture("score3", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, "score3", textType::solid, { 0,0,0,225 }, { 0,0,0,0 }));
 
 	theTextureMgr->addTexture("theBall", "Images\\ball.png"); // texture and position the ball on top of the paddle
-
 	ballSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("theBall")->getTWidth()) / 2)), (450-(theTextureMgr->getTexture("theBall")->getTHeight())) });
 	ballSprite.setTexture(theTextureMgr->getTexture("theBall"));
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBall")->getTWidth(), theTextureMgr->getTexture("theBall")->getTHeight());
@@ -225,11 +230,29 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	SpromptSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("spacebar")->getTWidth()) / 2)), 300 });
 	SpromptSprite.setTexture(theTextureMgr->getTexture("spacebar"));
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("spacebar")->getTWidth(), theTextureMgr->getTexture("spacebar")->getTHeight());
+
+	controllerSprite.setSpritePos({670,210});
+	controllerSprite.setTexture(theTextureMgr->getTexture("controllerNotConnected"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("controllerNotConnected")->getTWidth(), theTextureMgr->getTexture("controllerNotConnected")->getTHeight());
 	
 	ballSprite.initialise(); // set the bounding rectangles from cBall and cPaddle
 	paddleSprite.initialise();
 
-	cout << numberOfBlocks; // output the number of blocks on the screen (should be 144)
+	theHighScoreMgr->SetHighScores(-1);
+
+	vector<int> scores = theHighScoreMgr->GetHighScores();
+
+	theTextureMgr->deleteTexture("score1");
+	theTextureMgr->deleteTexture("score2");
+	theTextureMgr->deleteTexture("score3");
+
+	string tempScore = "1. " + to_string(scores[0]);
+	theTextureMgr->addTexture("score1", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, tempScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
+	tempScore = "2. " + to_string(scores[1]);
+	theTextureMgr->addTexture("score2", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, tempScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
+	tempScore = "3. " + to_string(scores[2]);
+	theTextureMgr->addTexture("score3", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, tempScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
+
 }
 
 /*
@@ -247,15 +270,16 @@ void cGame::run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		double elapsedTime = this->getElapsedSeconds(); // get the time that passed since the last frame
 
 		loop = this->getInput(loop);
-		this->update(elapsedTime);
+		this->update(elapsedTime, theRenderer);
 		this->render(theSDLWND, theRenderer);
+		theXInput->CheckController();
 	}
 }
 
 /*
-=================================================================================
+================================================================================================================================================================================================
 Render
-=================================================================================
+================================================================================================================================================================================================
 */
 
 void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
@@ -271,6 +295,16 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 			theButtonMgr->getBtn("play_btn")->render(theRenderer, &theButtonMgr->getBtn("play_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("play_btn")->getSpritePos(), theButtonMgr->getBtn("play_btn")->getSpriteScale());
 			theButtonMgr->getBtn("scores_btn")->render(theRenderer, &theButtonMgr->getBtn("scores_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("scores_btn")->getSpritePos(), theButtonMgr->getBtn("scores_btn")->getSpriteScale());
 			theButtonMgr->getBtn("quit_btn")->render(theRenderer, &theButtonMgr->getBtn("quit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("quit_btn")->getSpritePos(), theButtonMgr->getBtn("quit_btn")->getSpriteScale());
+
+			if (theXInput->controllerConnected)
+			{
+				controllerSprite.setTexture(theTextureMgr->getTexture("controllerConnected"));
+			}
+			else
+			{
+				controllerSprite.setTexture(theTextureMgr->getTexture("controllerNotConnected"));
+			}
+			controllerSprite.render(theRenderer, &controllerSprite.getSpriteDimensions(), &controllerSprite.getSpritePos(), NULL, &controllerSprite.getSpriteCentre(), controllerSprite.getSpriteScale());
 		}
 		break;
 
@@ -278,21 +312,21 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		{
 			spriteBkgd.setTexture(theTextureMgr->getTexture("theBackground"));
 			spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
+
+			// render the paddle and ball
 			paddleSprite.render(theRenderer, &paddleSprite.getSpriteDimensions(), &paddleSprite.getSpritePos(), NULL, &paddleSprite.getSpriteCentre(), paddleSprite.getSpriteScale());
 			ballSprite.render(theRenderer, &ballSprite.getSpriteDimensions(), &ballSprite.getSpritePos(), NULL, &ballSprite.getSpriteCentre(), ballSprite.getSpriteScale());
-
-			if (!(paddleSprite.hasMoved))
+			
+			if (!(paddleSprite.hasMoved)) // check if the right or left arrow keys have been pressed
 			{
+				// if not, render the left and right arrow key prompts
 				LpromptSprite.render(theRenderer, &LpromptSprite.getSpriteDimensions(), &LpromptSprite.getSpritePos(), NULL, &LpromptSprite.getSpriteCentre(), LpromptSprite.getSpriteScale());
-			}
-
-			if (!(paddleSprite.hasMoved))
-			{
 				RpromptSprite.render(theRenderer, &RpromptSprite.getSpriteDimensions(), &RpromptSprite.getSpritePos(), NULL, &RpromptSprite.getSpriteCentre(), RpromptSprite.getSpriteScale());
 			}
 
-			if (!(ballSprite.isMoving))
+			if (!(ballSprite.isMoving)) // check if the ball has been launched from the paddle
 			{
+				// if not, render the spacebar prompt
 				SpromptSprite.render(theRenderer, &SpromptSprite.getSpriteDimensions(), &SpromptSprite.getSpritePos(), NULL, &SpromptSprite.getSpriteCentre(), SpromptSprite.getSpriteScale());
 			}
 
@@ -326,6 +360,21 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 			spriteBkgd.setTexture(theTextureMgr->getTexture("scoresBackground"));
 			spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 			theButtonMgr->getBtn("menu_btn")->render(theRenderer, &theButtonMgr->getBtn("menu_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("menu_btn")->getSpritePos(), theButtonMgr->getBtn("menu_btn")->getSpriteScale());
+
+			theHighScoreMgr->GetHighScores();
+
+			tempTextTexture = theTextureMgr->getTexture("score1");
+			pos = { 350, 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+
+			tempTextTexture = theTextureMgr->getTexture("score2");
+			pos = { 350, 350, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+
+			tempTextTexture = theTextureMgr->getTexture("score3");
+			pos = { 350, 400, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+
 		}
 		break;
 		
@@ -341,15 +390,20 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 				spriteBkgd.setTexture(theTextureMgr->getTexture("loseBackground"));
 				spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 			}
-			
+		
 			theButtonMgr->getBtn("replay_btn")->render(theRenderer, &theButtonMgr->getBtn("replay_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("replay_btn")->getSpritePos(), theButtonMgr->getBtn("replay_btn")->getSpriteScale());
 			theButtonMgr->getBtn("quit_btn")->render(theRenderer, &theButtonMgr->getBtn("quit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("quit_btn")->getSpritePos(), theButtonMgr->getBtn("quit_btn")->getSpriteScale());
+			theButtonMgr->getBtn("menu_btn")->render(theRenderer, &theButtonMgr->getBtn("menu_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("menu_btn")->getSpritePos(), theButtonMgr->getBtn("menu_btn")->getSpriteScale());
 
 			theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
 			cTexture* tempTextTexture = theTextureMgr->getTexture("playerScore");
 			SDL_Rect pos = { (700 - tempTextTexture->getTextureRect().w), 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 			FPoint scale = { 1,1 };
 			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+
+			
+
+			
 
 		}
 		break;
@@ -375,7 +429,7 @@ Update
 =================================================================================
 */
 
-void cGame::update(double deltaTime)
+void cGame::update(double deltaTime, SDL_Renderer* theRenderer)
 {
 	switch (theGameState)
 	{
@@ -395,7 +449,11 @@ void cGame::update(double deltaTime)
 
 	case gameState::playing:
 	{
-
+		if (theXInput->controllerConnected) 
+		{
+			XInputControls(loop);
+		}
+		
 		paddleSprite.update(deltaTime); // call the update methods of paddle/ball scripts to allow continuous movement
 		ballSprite.update(deltaTime);
 
@@ -547,14 +605,51 @@ void cGame::update(double deltaTime)
 			}
 			
 		}
+
+		
+
 		// check if the player has won
 		if (playerScore >= 7200)
 		{
+			theHighScoreMgr->SetHighScores(playerScore);
+
+			vector<int> scores = theHighScoreMgr->GetHighScores();
+
+			theTextureMgr->deleteTexture("score1");
+			theTextureMgr->deleteTexture("score2");
+			theTextureMgr->deleteTexture("score3");
+
+			string tempScore = "1. " + to_string(scores[0]);
+			theTextureMgr->addTexture("score1", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, tempScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
+			tempScore = "2. " + to_string(scores[1]);
+			theTextureMgr->addTexture("score2", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, tempScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
+			tempScore = "3. " + to_string(scores[2]);
+			theTextureMgr->addTexture("score3", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, tempScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
+
+
+			if (theGameState == gameState::playing) ResetGame();
+
 			theGameState = gameState::end;
 		}
 
 		if (ballSprite.outOfBounds)
 		{
+			theHighScoreMgr->SetHighScores(playerScore);
+
+			vector<int> scores = theHighScoreMgr->GetHighScores();
+
+			theTextureMgr->deleteTexture("score1");
+			theTextureMgr->deleteTexture("score2");
+			theTextureMgr->deleteTexture("score3");
+
+			string tempScore = "1. " + to_string(scores[0]);
+			theTextureMgr->addTexture("score1", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, tempScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
+			tempScore = "2. " + to_string(scores[1]);
+			theTextureMgr->addTexture("score2", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, tempScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
+			tempScore = "3. " + to_string(scores[2]);
+			theTextureMgr->addTexture("score3", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, tempScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
+
+			if (theGameState == gameState::playing) ResetGame();
 			theGameState = gameState::end;
 		}
 	}
@@ -564,8 +659,8 @@ void cGame::update(double deltaTime)
 	{
 		theGameState = theButtonMgr->getBtn("replay_btn")->update(theGameState, gameState::playing, theAreaClicked);
 		theGameState = theButtonMgr->getBtn("quit_btn")->update(theGameState, gameState::exit, theAreaClicked);
-
-		if (theGameState == gameState::playing) resetGame();
+		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, gameState::menu, theAreaClicked);
+		
 	}
 	break;
 
@@ -578,9 +673,59 @@ void cGame::update(double deltaTime)
 
 }
 
+bool cGame::XInputControls(bool theLoop)
+{
+	if (theXInput->l1Pressed)
+	{
+		paddleSprite.isGoingLeft = true;
+		if (!(ballSprite.isMoving))
+		{
+			ballSprite.isGoingLeft = true;
+		}
+		paddleSprite.hasMoved = true;
+	}
+	else
+	{
+		paddleSprite.isGoingLeft = false;
+		ballSprite.isGoingLeft = false;
+	}
+
+	if (theXInput->r1Pressed)
+	{
+		paddleSprite.isGoingRight = true;
+		if (!(ballSprite.isMoving))
+		{
+			ballSprite.isGoingRight = true;
+		}
+		paddleSprite.hasMoved = true;
+	}
+	else
+	{
+		paddleSprite.isGoingRight = false;
+		ballSprite.isGoingRight = false;
+	}
+
+	if (theXInput->aPressed)
+	{
+		ballSprite.isMoving = true;
+	}
+
+	if (theXInput->bPressed)
+	{
+		theLoop = false;
+	}
+	
+	return theLoop;
+}
+
 bool cGame::getInput(bool theLoop)
 {
 	SDL_Event event;
+
+	if (theXInput->bPressed)
+	{
+		theLoop = false;
+	}
 
 	while (SDL_PollEvent(&event))
 	{
@@ -709,7 +854,7 @@ double cGame::getElapsedSeconds()
 	return deltaTime.count();
 }
 
-void cGame::resetGame()
+void cGame::ResetGame()
 {
 	playerScore = 0;
 

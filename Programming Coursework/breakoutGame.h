@@ -17,5 +17,7 @@
 #include "cPrompts.h"
 #include "cButton.h"
 #include "cButtonMgr.h"
+#include "cHighScoreMgr.h"
+#include "cXInput.h"
 
 #endif

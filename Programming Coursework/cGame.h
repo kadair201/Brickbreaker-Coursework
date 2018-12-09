@@ -8,6 +8,9 @@ cGame.h
 */
 
 #include <SDL.h>
+#include <string>
+#include <vector>
+
 
 // Game specific includes
 #include "breakoutGame.h"
@@ -26,7 +29,7 @@ public:
 	void render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer);
 	void render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer, double rotAngle, SDL_Point* spriteCentre);
 	void update();
-	void update(double deltaTime);
+	void update(double deltaTime, SDL_Renderer* theRenderer);
 	bool getInput(bool theLoop);
 	double getElapsedSeconds();
 	int numberOfBlocks;
@@ -52,6 +55,7 @@ private:
 	cPrompts LpromptSprite;
 	cPrompts RpromptSprite;
 	cPrompts SpromptSprite;
+	cSprite controllerSprite;
 	vector<LPCSTR> textName;
 	vector<LPCSTR> texturesToUse;
 	
@@ -60,6 +64,7 @@ private:
 	vector<LPCSTR> fontsToUse;
 	// Text for Game
 	vector<LPCSTR> gameTextList;
+	vector<LPCSTR> highScoreTextures;
 	// Game Sounds
 	vector<LPCSTR> soundList;
 	vector<soundType> soundTypes;
@@ -79,8 +84,8 @@ private:
 	SDL_Point theAreaClicked;
 	bool loop;
 	bool playingAgain;
-	int highScore;
-	void resetGame();
+	void ResetGame();
+	bool XInputControls(bool theLoop);
 };
 
 #endif
