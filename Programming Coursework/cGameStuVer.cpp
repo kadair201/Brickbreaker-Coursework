@@ -273,6 +273,7 @@ void cGame::run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		this->update(elapsedTime, theRenderer);
 		this->render(theSDLWND, theRenderer);
 		theXInput->CheckController();
+		
 	}
 }
 
@@ -722,9 +723,12 @@ bool cGame::getInput(bool theLoop)
 {
 	SDL_Event event;
 
-	if (theXInput->bPressed)
+	if (theXInput->controllerConnected)
 	{
-		theLoop = false;
+		if (theXInput->bPressed)
+		{
+			theLoop = false;
+		}
 	}
 
 	while (SDL_PollEvent(&event))
