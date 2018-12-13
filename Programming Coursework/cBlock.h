@@ -5,9 +5,11 @@
 class cBlock : public cSprite
 {
 public:
-	void initialise();		// Default render function
-	void update(double deltaTime);		// block update method
+	// initialise methods
+	void initialise();		
+	void update(double deltaTime);		
 	
+	// initialise variables
 	bool isActive;
 	int scoreValue;
 };

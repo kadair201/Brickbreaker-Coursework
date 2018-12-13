@@ -4,10 +4,11 @@
 class cXInput
 {
 private:
-	
+	// initialise instance
 	static cXInput* pInstance;
 
 public:
+	// initialise methods and variables
 	static cXInput* getInstance();
 
 	cXInput();

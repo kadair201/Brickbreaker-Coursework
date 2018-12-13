@@ -1,8 +1,6 @@
 /*
 =================
 cButton.h
-- Header file for class definition - SPECIFICATION
-- Header file for the tileMap class which is a child of cSprite class
 =================
 */
 #ifndef _CBUTTON_H
@@ -13,11 +11,12 @@ class cButton : public cSprite
 {
 
 private:
-
+	// initialise variables
 	SDL_Point buttonClickedRC;
 	bool clicked = false;
 
 public:
+	// initialise methods and variables
 	cButton();
 
 	gameState update(gameState theCurrentGameState, gameState newGameState, SDL_Point theAreaClicked);

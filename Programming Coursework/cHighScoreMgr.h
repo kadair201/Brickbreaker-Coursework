@@ -6,9 +6,11 @@
 class cHighScoreMgr
 {
 private:
+	// initialise instance
 	static cHighScoreMgr* pInstance;
 
 public:
+	// initialise methods, variables and vector
 	static cHighScoreMgr* getInstance();
 
 	cHighScoreMgr();

@@ -1,8 +1,6 @@
 /*
 =================
 cTexture.h
-- Header file for class definition - SPECIFICATION
-- Header file for the cD3DXTexture class
 =================
 */
 #ifndef _CTEXTURE_H
@@ -12,12 +10,14 @@ cTexture.h
 class cTexture
 {
 private:
+	// initialise variables
 	SDL_Texture* sdlTextureID;
 	int textureWidth;
 	int textureHeight;
 
 
 public:
+	// initialise variables and methods
 	cTexture();
 	cTexture(LPCSTR theFilename, SDL_Renderer *theRenderer);
 	~cTexture();

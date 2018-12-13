@@ -157,7 +157,6 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="cGame.h" />
     <ClInclude Include="cHighScoreMgr.h" />
     <ClInclude Include="cPaddle.h" />
-    <ClInclude Include="cPrompts.h" />
     <ClInclude Include="cSDL2WNDManager.h" />
     <ClInclude Include="cSound.h" />
     <ClInclude Include="cSoundMgr.h" />
@@ -179,7 +178,6 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="cGameStuVer.cpp" />
     <ClCompile Include="cHighScoreMgr.cpp" />
     <ClCompile Include="cPaddle.cpp" />
-    <ClCompile Include="cPrompts.cpp" />
     <ClCompile Include="cSDL2WNDManager.cpp" />
     <ClCompile Include="cSound.cpp" />
     <ClCompile Include="cSoundMgr.cpp" />

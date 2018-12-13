@@ -22,7 +22,7 @@ class cGame
 {
 public:
 	cGame();
-
+	// initialise methods and variables
 	void initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer);
 	void run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer);
 	void cleanUp(SDL_Window* theSDLWND);
@@ -40,7 +40,7 @@ public:
 	static cGame* getInstance();
 
 private:
-
+	// initialise methods and variables
 	static cGame* pInstance;
 	// for framerates
 	time_point< high_resolution_clock > m_lastTime;
@@ -52,10 +52,11 @@ private:
 	cSprite spriteBkgd;
 	cPaddle paddleSprite;
 	cBall ballSprite;
-	cPrompts LpromptSprite;
-	cPrompts RpromptSprite;
-	cPrompts SpromptSprite;
+	cSprite LpromptSprite;
+	cSprite RpromptSprite;
+	cSprite SpromptSprite;
 	cSprite controllerSprite;
+	cSprite controllerPromptSprite;
 	vector<LPCSTR> textName;
 	vector<LPCSTR> texturesToUse;
 	
@@ -82,8 +83,11 @@ private:
 	FPoint scale;
 	cTexture* tempTextTexture;
 	SDL_Point theAreaClicked;
+
+	// variables for the game
 	bool loop;
 	bool playingAgain;
+	// methods for the game
 	void ResetGame();
 	bool XInputControls(bool theLoop);
 };

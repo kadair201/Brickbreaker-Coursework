@@ -5,16 +5,16 @@
 class cBall : public cSprite
 {
 public:
+	// variables for movement
 	int xVelocity;
 	int yVelocity;
 	bool isMoving;
 	bool isGoingLeft;
 	bool isGoingRight;
 	bool outOfBounds;
-	int radius;
-
-	void initialise();		// Default render function
-	void update(double deltaTime);		// ball update method
+	// declaring methods to use
+	void initialise();		
+	void update(double deltaTime);	
 };
 
 #endif

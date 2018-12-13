@@ -29,9 +29,6 @@ private:
 	int textureWidth;
 	int textureHeight;
 
-	
-
-
 public:
 	cSprite();			// Default constructor
 	cSprite(cTexture* theSpriteTexture);			// Default constructor

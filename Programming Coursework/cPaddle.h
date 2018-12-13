@@ -1,8 +1,6 @@
 /*
 =================
 cPaddle.h
-- Header file for class definition - SPECIFICATION
-- Header file for the paddle class which is a child of cSprite class
 =================
 */
 #ifndef _CPADDLE_H
@@ -12,12 +10,14 @@ cPaddle.h
 class cPaddle : public cSprite
 {
 public:
+	// variables for movement
 	bool isGoingLeft;
 	bool isGoingRight;
 	bool hasMoved;
 
-	void initialise();		// Default render function
-	void update(double deltaTime);		// Paddle update method
+	// methods
+	void initialise();
+	void update(double deltaTime);
 };
 
 #endif

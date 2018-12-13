@@ -53,48 +53,112 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	this->m_lastTime = high_resolution_clock::now();
 
-	playerScore = 0;  // reset score
+	// initialise the font and sound managers
+	theFontMgr->initFontLib();
+	theSoundMgr->initMixer();
 
+	// initalise the font list
+	fontList = { "ka1" };
+	fontsToUse = { "Fonts/ka1.ttf" };  // https://www.dafont.com/karmatic-arcade.font
+	for (int fonts = 0; fonts < (int)fontList.size(); fonts++)
+	{
+		theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 36);
+	}
+	// initialise the game text list
+	gameTextList = { "Breakout!", "Score: " };
+	strScore = gameTextList[1];
+	strScore += to_string(playerScore).c_str();
+
+	// Load game sounds
+	soundList = { "theme", "click", "bounce" };
+	soundTypes = { soundType::music, soundType::sfx, soundType::sfx };
+	soundsToUse = { "Audio/BackgroundMusic.wav", "Audio/ClickSound.wav", "Audio/BounceSound.wav" };
+	for (unsigned int sounds = 0; sounds < soundList.size(); sounds++)
+	{
+		theSoundMgr->add(soundList[sounds], soundsToUse[sounds], soundTypes[sounds]);
+	}
+	theSoundMgr->getSnd("theme")->play(-1);
+
+	// reset player score
+	playerScore = 0;  
+	// initalise the size of the blocks
+	int xPos = 40;
+	int yPos = 20;
+
+	// check if the controller is attached
 	theXInput->CheckController();
 
+	// load background textures
 	theTextureMgr->setRenderer(theRenderer);
-	theTextureMgr->addTexture("theBackground", "Images\\background.png"); // add textures from the images folder
+	theTextureMgr->addTexture("theBackground", "Images\\background.png");
 	theTextureMgr->addTexture("menuBackground", "Images\\menu.png");
 	theTextureMgr->addTexture("scoresBackground", "Images\\scores.png");
 	theTextureMgr->addTexture("winBackground", "Images\\winScreen.png");
 	theTextureMgr->addTexture("loseBackground", "Images\\loseScreen.png");
+	// load controller textures
 	theTextureMgr->addTexture("controllerConnected", "Images\\controllerConnected.png");
 	theTextureMgr->addTexture("controllerNotConnected", "Images\\controllerNotConnected.png");
-	
-	spriteBkgd.setSpritePos({ 0, 0 });
-	spriteBkgd.setTexture(theTextureMgr->getTexture("theBackground"));
-	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBackground")->getTWidth(), theTextureMgr->getTexture("theBackground")->getTHeight());
-
-	theTextureMgr->addTexture("thePaddle", "Images\\tile.png");  // position the paddle sprite at the bottom of the screen
-	paddleSprite.setSpritePos({ (375-((theTextureMgr->getTexture("thePaddle")->getTWidth())/2)), 450 }); 
-	paddleSprite.setTexture(theTextureMgr->getTexture("thePaddle"));
-	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("thePaddle")->getTWidth(), theTextureMgr->getTexture("thePaddle")->getTHeight());
-
-	
-	int xPos = 40; // declare variables representing the size of each block
-	int yPos = 20;
-	
-	
-	theTextureMgr->addTexture("theRedBlock", "Images\\Red.png"); // add textures for the coloured blocks
-	theTextureMgr->addTexture("theOrangeBlock", "Images\\Orange.png");
-	theTextureMgr->addTexture("theYellowBlock", "Images\\Yellow.png");
-	theTextureMgr->addTexture("theGreenBlock", "Images\\Green.png");
-	theTextureMgr->addTexture("theBlueBlock", "Images\\Blue.png");
-	theTextureMgr->addTexture("theDarkBlueBlock", "Images\\BlueAGAIN.png");
-	theTextureMgr->addTexture("thePurpleBlock", "Images\\Purple.png");
-	theTextureMgr->addTexture("thePinkBlock", "Images\\Pink.png");
-	theTextureMgr->addTexture("theMagentaBlock", "Images\\PinkAGAIN.png");
-
+	theTextureMgr->addTexture("controllerControls", "Images\\controllerControls.png");
+	// load the paddle and ball textures
+	theTextureMgr->addTexture("thePaddle", "Images\\tile.png");
+	theTextureMgr->addTexture("theBall", "Images\\ball.png");
+	// load the font textures
+	theTextureMgr->addTexture("Title", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, gameTextList[0], textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
+	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
+	theTextureMgr->addTexture("score1", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, "score1", textType::solid, { 0,0,0,225 }, { 0,0,0,0 }));
+	theTextureMgr->addTexture("score2", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, "score2", textType::solid, { 0,0,0,225 }, { 0,0,0,0 }));
+	theTextureMgr->addTexture("score3", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, "score3", textType::solid, { 0,0,0,225 }, { 0,0,0,0 }));
+	// load the prompt textures
 	theTextureMgr->addTexture("leftArrow", "Images\\left.png");
 	theTextureMgr->addTexture("rightArrow", "Images\\right.png");
 	theTextureMgr->addTexture("spacebar", "Images\\space.png");
+	// load the block textures
+	theTextureMgr->addTexture("theRedBlock", "Images\\Red.png");
+	theTextureMgr->addTexture("theOrangeBlock", "Images\\Orange.png");
+	theTextureMgr->addTexture("theYellowBlock", "Images\\Yellow.png");
+	theTextureMgr->addTexture("theGreenBlock", "Images\\Green.png");
+	theTextureMgr->addTexture("theBlueBlock", "Images\\Teal.png");
+	theTextureMgr->addTexture("theDarkBlueBlock", "Images\\Blue.png");
+	theTextureMgr->addTexture("thePurpleBlock", "Images\\Purple.png");
+	theTextureMgr->addTexture("thePinkBlock", "Images\\Magenta.png");
+	theTextureMgr->addTexture("theMagentaBlock", "Images\\Pink.png");
+	
+	// set up the sprite backgrounds
+	spriteBkgd.setSpritePos({ 0, 0 });
+	spriteBkgd.setTexture(theTextureMgr->getTexture("theBackground"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBackground")->getTWidth(), theTextureMgr->getTexture("theBackground")->getTHeight());
+	// set up the paddle sprite
+	paddleSprite.setSpritePos({ (375-((theTextureMgr->getTexture("thePaddle")->getTWidth())/2)), 450 }); 
+	paddleSprite.setTexture(theTextureMgr->getTexture("thePaddle"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("thePaddle")->getTWidth(), theTextureMgr->getTexture("thePaddle")->getTHeight());
+	// set up the ball sprite
+	ballSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("theBall")->getTWidth()) / 2)), (450 - (theTextureMgr->getTexture("theBall")->getTHeight())) });
+	ballSprite.setTexture(theTextureMgr->getTexture("theBall"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBall")->getTWidth(), theTextureMgr->getTexture("theBall")->getTHeight());
+	// set up the left arrow prompt sprite
+	LpromptSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("spacebar")->getTWidth())) - (theTextureMgr->getTexture("leftArrow")->getTWidth())), 350 });
+	LpromptSprite.setTexture(theTextureMgr->getTexture("leftArrow"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("leftArrow")->getTWidth(), theTextureMgr->getTexture("leftArrow")->getTHeight());
+	// set up the right arrow prompt sprite
+	RpromptSprite.setSpritePos({ (375 + ((theTextureMgr->getTexture("spacebar")->getTWidth()) / 2) + theTextureMgr->getTexture("rightArrow")->getTWidth()), 350 });
+	RpromptSprite.setTexture(theTextureMgr->getTexture("rightArrow"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("rightArrow")->getTWidth(), theTextureMgr->getTexture("rightArrow")->getTHeight());
+	// set up the controller prompt sprite
+	controllerPromptSprite.setSpritePos({ 275, 250 });
+	controllerPromptSprite.setTexture(theTextureMgr->getTexture("controllerControls"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("controllerControls")->getTWidth(), theTextureMgr->getTexture("controllerControls")->getTHeight());
+	// set up the spacebar prompt sprite
+	SpromptSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("spacebar")->getTWidth()) / 2)), 300 });
+	SpromptSprite.setTexture(theTextureMgr->getTexture("spacebar"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("spacebar")->getTWidth(), theTextureMgr->getTexture("spacebar")->getTHeight());
+	// set up the controller prompt sprite
+	controllerSprite.setSpritePos({ 670,210 });
+	controllerSprite.setTexture(theTextureMgr->getTexture("controllerNotConnected"));
+	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("controllerNotConnected")->getTWidth(), theTextureMgr->getTexture("controllerNotConnected")->getTHeight());
 
+	// set up the buttons
 	btnNameList = { "play_btn", "scores_btn", "quit_btn", "menu_btn", "replay_btn" };
+	// set up button textures and positions
 	btnTexturesToUse = { "Images\\GoButton.png", "Images\\ScoresButton.png", "Images\\QuitButton.png", "Images\\MenuButton.png", "Images\\ReplayButton.png" };
 	btnPos = { { 500, 250 }, { 500, 325 }, { 500, 400 }, { 10, 400 }, {250,400} };
 	for (unsigned int bCount = 0; bCount < btnNameList.size(); bCount++)
@@ -112,6 +176,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theGameState = gameState::menu;
 	theBtnType = btnTypes::exit;
 	
+	// initialise the blocks textures and scores
 	for (int i = 0; i < 16; i++) // for each block in the 16x9 array 
 	{
 		for (int j = 0; j < 9; j++)
@@ -184,68 +249,22 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		}
 		
 	}
-	theFontMgr->initFontLib();
-	theSoundMgr->initMixer();
 
-	fontList = { "ka1" }; // create textures for text
-	fontsToUse = { "Fonts/ka1.ttf" };  // https://www.dafont.com/karmatic-arcade.font
-	for (int fonts = 0; fonts < (int)fontList.size(); fonts++)
-	{
-		theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 36);
-	}
-	gameTextList = { "Breakout!", "Score: " };
-	strScore = gameTextList[1];
-	strScore += to_string(playerScore).c_str();
-
-	// Load game sounds
-	soundList = { "theme", "click", "bounce" };
-	soundTypes = { soundType::music, soundType::sfx, soundType::sfx };
-	soundsToUse = { "Audio/BackgroundMusic.wav", "Audio/ClickSound.wav", "Audio/BounceSound.wav" };
-	for (unsigned int sounds = 0; sounds < soundList.size(); sounds++)
-	{
-		theSoundMgr->add(soundList[sounds], soundsToUse[sounds], soundTypes[sounds]);
-	}
-
-	theSoundMgr->getSnd("theme")->play(-1);
-	
-	theTextureMgr->addTexture("Title", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, gameTextList[0], textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
-	theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal, 255 }, { 0, 0, 0, 0 }));
-	theTextureMgr->addTexture("score1", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, "score1", textType::solid, { 0,0,0,225 }, { 0,0,0,0 }));
-	theTextureMgr->addTexture("score2", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, "score2", textType::solid, { 0,0,0,225 }, { 0,0,0,0 }));
-	theTextureMgr->addTexture("score3", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, "score3", textType::solid, { 0,0,0,225 }, { 0,0,0,0 }));
-
-	theTextureMgr->addTexture("theBall", "Images\\ball.png"); // texture and position the ball on top of the paddle
-	ballSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("theBall")->getTWidth()) / 2)), (450-(theTextureMgr->getTexture("theBall")->getTHeight())) });
-	ballSprite.setTexture(theTextureMgr->getTexture("theBall"));
-	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBall")->getTWidth(), theTextureMgr->getTexture("theBall")->getTHeight());
-
-	LpromptSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("spacebar")->getTWidth())) - (theTextureMgr->getTexture("leftArrow")->getTWidth())), 350 });
-	LpromptSprite.setTexture(theTextureMgr->getTexture("leftArrow"));
-	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("leftArrow")->getTWidth(), theTextureMgr->getTexture("leftArrow")->getTHeight());
-
-	RpromptSprite.setSpritePos({ (375 + ((theTextureMgr->getTexture("spacebar")->getTWidth()) / 2) + theTextureMgr->getTexture("rightArrow")->getTWidth()), 350 });
-	RpromptSprite.setTexture(theTextureMgr->getTexture("rightArrow"));
-	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("rightArrow")->getTWidth(), theTextureMgr->getTexture("rightArrow")->getTHeight());
-	
-	SpromptSprite.setSpritePos({ (375 - ((theTextureMgr->getTexture("spacebar")->getTWidth()) / 2)), 300 });
-	SpromptSprite.setTexture(theTextureMgr->getTexture("spacebar"));
-	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("spacebar")->getTWidth(), theTextureMgr->getTexture("spacebar")->getTHeight());
-
-	controllerSprite.setSpritePos({670,210});
-	controllerSprite.setTexture(theTextureMgr->getTexture("controllerNotConnected"));
-	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("controllerNotConnected")->getTWidth(), theTextureMgr->getTexture("controllerNotConnected")->getTHeight());
-	
 	ballSprite.initialise(); // set the bounding rectangles from cBall and cPaddle
 	paddleSprite.initialise();
 
+	// set high score to -1 so that it doesn't go on the scoreboard
 	theHighScoreMgr->SetHighScores(-1);
 
+	// create a vector of scores from GetHighScores()
 	vector<int> scores = theHighScoreMgr->GetHighScores();
 
+	// score textures are deleted
 	theTextureMgr->deleteTexture("score1");
 	theTextureMgr->deleteTexture("score2");
 	theTextureMgr->deleteTexture("score3");
 
+	// score textures are re-assigned so they are accurate
 	string tempScore = "1. " + to_string(scores[0]);
 	theTextureMgr->addTexture("score1", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, tempScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
 	tempScore = "2. " + to_string(scores[1]);
@@ -318,17 +337,29 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 			paddleSprite.render(theRenderer, &paddleSprite.getSpriteDimensions(), &paddleSprite.getSpritePos(), NULL, &paddleSprite.getSpriteCentre(), paddleSprite.getSpriteScale());
 			ballSprite.render(theRenderer, &ballSprite.getSpriteDimensions(), &ballSprite.getSpritePos(), NULL, &ballSprite.getSpriteCentre(), ballSprite.getSpriteScale());
 			
-			if (!(paddleSprite.hasMoved)) // check if the right or left arrow keys have been pressed
+			// if the controller is not attached, show the keyboard controls
+			if (!(theXInput->controllerConnected))
 			{
-				// if not, render the left and right arrow key prompts
-				LpromptSprite.render(theRenderer, &LpromptSprite.getSpriteDimensions(), &LpromptSprite.getSpritePos(), NULL, &LpromptSprite.getSpriteCentre(), LpromptSprite.getSpriteScale());
-				RpromptSprite.render(theRenderer, &RpromptSprite.getSpriteDimensions(), &RpromptSprite.getSpritePos(), NULL, &RpromptSprite.getSpriteCentre(), RpromptSprite.getSpriteScale());
-			}
+				if (!(paddleSprite.hasMoved)) // check if the right or left arrow keys have been pressed
+				{
+					// if not, render the left and right arrow key prompts
+					LpromptSprite.render(theRenderer, &LpromptSprite.getSpriteDimensions(), &LpromptSprite.getSpritePos(), NULL, &LpromptSprite.getSpriteCentre(), LpromptSprite.getSpriteScale());
+					RpromptSprite.render(theRenderer, &RpromptSprite.getSpriteDimensions(), &RpromptSprite.getSpritePos(), NULL, &RpromptSprite.getSpriteCentre(), RpromptSprite.getSpriteScale());
+				}
 
-			if (!(ballSprite.isMoving)) // check if the ball has been launched from the paddle
+				if (!(ballSprite.isMoving)) // check if the ball has been launched from the paddle
+				{
+					// if not, render the spacebar prompt
+					SpromptSprite.render(theRenderer, &SpromptSprite.getSpriteDimensions(), &SpromptSprite.getSpritePos(), NULL, &SpromptSprite.getSpriteCentre(), SpromptSprite.getSpriteScale());
+				}
+			}
+			else // if the controller is plugged in, show the controller controls
 			{
-				// if not, render the spacebar prompt
-				SpromptSprite.render(theRenderer, &SpromptSprite.getSpriteDimensions(), &SpromptSprite.getSpritePos(), NULL, &SpromptSprite.getSpriteCentre(), SpromptSprite.getSpriteScale());
+				if (!(paddleSprite.hasMoved) && !(ballSprite.isMoving))
+				{
+					controllerPromptSprite.render(theRenderer, &controllerPromptSprite.getSpriteDimensions(), &controllerPromptSprite.getSpritePos(), NULL, &controllerPromptSprite.getSpriteCentre(), controllerPromptSprite.getSpriteScale());
+				}
+
 			}
 
 			for (int i = 0; i < 16; i++)
