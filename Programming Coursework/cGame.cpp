@@ -182,8 +182,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		for (int j = 0; j < 9; j++)
 		{
 			blocks[i][j].setSpritePos({ (i * xPos)+55,(j*yPos)+60 });  // position the block according to i and j values
-			
-			numberOfBlocks++;
+	
 
 			// switch statement to determine which colour is assigned to the block, depending on the row (j)
 			// each colour has a different score value
@@ -304,26 +303,37 @@ Render
 
 void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
+	// clear render
 	SDL_RenderClear(theRenderer);
 
+	// switch statement for game states
 	switch (theGameState)
 	{
 		case (gameState::menu):
 		{
+			// load the menu background 
 			spriteBkgd.setTexture(theTextureMgr->getTexture("menuBackground"));
+			// render it 
 			spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
+			// render the play button
 			theButtonMgr->getBtn("play_btn")->render(theRenderer, &theButtonMgr->getBtn("play_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("play_btn")->getSpritePos(), theButtonMgr->getBtn("play_btn")->getSpriteScale());
+			// render the scores button
 			theButtonMgr->getBtn("scores_btn")->render(theRenderer, &theButtonMgr->getBtn("scores_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("scores_btn")->getSpritePos(), theButtonMgr->getBtn("scores_btn")->getSpriteScale());
+			// render the quit button
 			theButtonMgr->getBtn("quit_btn")->render(theRenderer, &theButtonMgr->getBtn("quit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("quit_btn")->getSpritePos(), theButtonMgr->getBtn("quit_btn")->getSpriteScale());
 
+			// if the controller is connected
 			if (theXInput->controllerConnected)
 			{
+				// set the sprite indicator to green
 				controllerSprite.setTexture(theTextureMgr->getTexture("controllerConnected"));
 			}
 			else
 			{
+				// set the sprite indicator to red
 				controllerSprite.setTexture(theTextureMgr->getTexture("controllerNotConnected"));
 			}
+			// render the indicator
 			controllerSprite.render(theRenderer, &controllerSprite.getSpriteDimensions(), &controllerSprite.getSpritePos(), NULL, &controllerSprite.getSpriteCentre(), controllerSprite.getSpriteScale());
 		}
 		break;
@@ -362,12 +372,15 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 			}
 
+			// go through the array of blocks 
 			for (int i = 0; i < 16; i++)
 			{
 				for (int j = 0; j < 9; j++)
 				{
+					// check if each block is active
 					if (blocks[i][j].isActive)
 					{
+						// if so, render the block
 						blocks[i][j].render(theRenderer, &blocks[i][j].getSpriteDimensions(), &blocks[i][j].getSpritePos(), NULL, &blocks[i][j].getSpriteCentre(), blocks[i][j].getSpriteScale());
 					}
 				}
@@ -389,22 +402,32 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 		case gameState::scores:
 		{
+			// set the background
 			spriteBkgd.setTexture(theTextureMgr->getTexture("scoresBackground"));
+			// render the background
 			spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
+			// render the menu button
 			theButtonMgr->getBtn("menu_btn")->render(theRenderer, &theButtonMgr->getBtn("menu_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("menu_btn")->getSpritePos(), theButtonMgr->getBtn("menu_btn")->getSpriteScale());
 
+			// get the list of high scores from the file
 			theHighScoreMgr->GetHighScores();
 
+			// texture and position these high scores
 			tempTextTexture = theTextureMgr->getTexture("score1");
 			pos = { 350, 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+			// render the high score
 			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 
+			// texture and position the second score
 			tempTextTexture = theTextureMgr->getTexture("score2");
 			pos = { 350, 350, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+			// render the second score
 			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 
+			// texture and position the third score
 			tempTextTexture = theTextureMgr->getTexture("score3");
 			pos = { 350, 400, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+			// render the third score
 			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 
 		}
@@ -412,31 +435,35 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		
 		case gameState::end:
 		{
+			// if the player won the game
 			if (playerScore >= 7200)
 			{
+				// render the 'win' background
 				spriteBkgd.setTexture(theTextureMgr->getTexture("winBackground"));
 				spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 			}
 			else 
 			{
+				// render the 'lose' background
 				spriteBkgd.setTexture(theTextureMgr->getTexture("loseBackground"));
 				spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 			}
 		
+			// render the replay button
 			theButtonMgr->getBtn("replay_btn")->render(theRenderer, &theButtonMgr->getBtn("replay_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("replay_btn")->getSpritePos(), theButtonMgr->getBtn("replay_btn")->getSpriteScale());
+			// render the quit button
 			theButtonMgr->getBtn("quit_btn")->render(theRenderer, &theButtonMgr->getBtn("quit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("quit_btn")->getSpritePos(), theButtonMgr->getBtn("quit_btn")->getSpriteScale());
+			// render the menu button
 			theButtonMgr->getBtn("menu_btn")->render(theRenderer, &theButtonMgr->getBtn("menu_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("menu_btn")->getSpritePos(), theButtonMgr->getBtn("menu_btn")->getSpriteScale());
 
+			// render the player's score to the screen
 			theTextureMgr->addTexture("playerScore", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
 			cTexture* tempTextTexture = theTextureMgr->getTexture("playerScore");
+			// position and scale the player score
 			SDL_Rect pos = { (700 - tempTextTexture->getTextureRect().w), 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 			FPoint scale = { 1,1 };
+			// render the score
 			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
-
-			
-
-			
-
 		}
 		break;
 	}
@@ -463,26 +490,34 @@ Update
 
 void cGame::update(double deltaTime, SDL_Renderer* theRenderer)
 {
+	// switch statement for game states
 	switch (theGameState)
 	{
+		
 	case gameState::menu:
 	{
+		// act when the play button is clicked, turn to the 'playing' gamestate
 		theGameState = theButtonMgr->getBtn("play_btn")->update(theGameState, gameState::playing, theAreaClicked);
+		// act when the quit button is clicked, turn to the 'exit' gamestate
 		theGameState = theButtonMgr->getBtn("quit_btn")->update(theGameState, gameState::exit, theAreaClicked);
+		// act when the scores button is clicked, turn to the 'scores' gamestate
 		theGameState = theButtonMgr->getBtn("scores_btn")->update(theGameState, gameState::scores, theAreaClicked);
 	}
 	break;
 
 	case gameState::scores:
 	{
+		// act when the menu button is clicked, transition to the 'menu' gamestate
 		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, gameState::menu, theAreaClicked);
 	}
 	break;
 
 	case gameState::playing:
 	{
+		// check if the controller is connected
 		if (theXInput->controllerConnected) 
 		{
+			// if it is, use the Xinput controls
 			XInputControls(loop);
 		}
 		
@@ -643,14 +678,18 @@ void cGame::update(double deltaTime, SDL_Renderer* theRenderer)
 		// check if the player has won
 		if (playerScore >= 7200)
 		{
+			// go through the high scores again
 			theHighScoreMgr->SetHighScores(playerScore);
 
+			// redo the scores to update the scoreboard
 			vector<int> scores = theHighScoreMgr->GetHighScores();
 
+			// delete the current textures
 			theTextureMgr->deleteTexture("score1");
 			theTextureMgr->deleteTexture("score2");
 			theTextureMgr->deleteTexture("score3");
 
+			// redo the new scores with updated textures
 			string tempScore = "1. " + to_string(scores[0]);
 			theTextureMgr->addTexture("score1", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, tempScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
 			tempScore = "2. " + to_string(scores[1]);
@@ -658,14 +697,17 @@ void cGame::update(double deltaTime, SDL_Renderer* theRenderer)
 			tempScore = "3. " + to_string(scores[2]);
 			theTextureMgr->addTexture("score3", theFontMgr->getFont("ka1")->createTextTexture(theRenderer, tempScore.c_str(), textType::solid, { colourVal, colourVal, colourVal,255 }, { 0, 0, 0, 0 }));
 
-
+			// if the player choses to replay
 			if (theGameState == gameState::playing) ResetGame();
 
+			// go to the end screen
 			theGameState = gameState::end;
 		}
 
+		// if the ball goes out of bounds
 		if (ballSprite.outOfBounds)
 		{
+			// do the same as above with the high scores
 			theHighScoreMgr->SetHighScores(playerScore);
 
 			vector<int> scores = theHighScoreMgr->GetHighScores();
@@ -689,6 +731,7 @@ void cGame::update(double deltaTime, SDL_Renderer* theRenderer)
 
 	case gameState::end:
 	{
+		// if the replay, quit or menu buttons are clicked, change the gamestate accordingly
 		theGameState = theButtonMgr->getBtn("replay_btn")->update(theGameState, gameState::playing, theAreaClicked);
 		theGameState = theButtonMgr->getBtn("quit_btn")->update(theGameState, gameState::exit, theAreaClicked);
 		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, gameState::menu, theAreaClicked);
@@ -698,6 +741,7 @@ void cGame::update(double deltaTime, SDL_Renderer* theRenderer)
 
 	case gameState::exit:
 	{
+		// end the game
 		loop = false;
 	}
 	break;
@@ -705,45 +749,61 @@ void cGame::update(double deltaTime, SDL_Renderer* theRenderer)
 
 }
 
+// controls for if the controller is connected
 bool cGame::XInputControls(bool theLoop)
 {
+	// if moving left
 	if (theXInput->l1Pressed)
 	{
+		// update paddle sprite variables
 		paddleSprite.isGoingLeft = true;
+		paddleSprite.hasMoved = true;
+		// if the ball hasn't launched from the pad
 		if (!(ballSprite.isMoving))
 		{
+			// update ball variable
 			ballSprite.isGoingLeft = true;
 		}
-		paddleSprite.hasMoved = true;
 	}
+	// if not moving left
 	else
 	{
+		// update the isGoingLeft variables for both sprites
 		paddleSprite.isGoingLeft = false;
 		ballSprite.isGoingLeft = false;
 	}
 
+	// if going right 
 	if (theXInput->r1Pressed)
 	{
+		// update paddleSprite variables
 		paddleSprite.isGoingRight = true;
+		paddleSprite.hasMoved = true;
+		// is ball hasn't launched
 		if (!(ballSprite.isMoving))
 		{
+			// move right with paddle
 			ballSprite.isGoingRight = true;
 		}
-		paddleSprite.hasMoved = true;
 	}
 	else
 	{
+		// update sprite variables
 		paddleSprite.isGoingRight = false;
 		ballSprite.isGoingRight = false;
 	}
 
+	// if A has been pressed, i.e. the ball has been launched
 	if (theXInput->aPressed)
 	{
+		// launch the ball
 		ballSprite.isMoving = true;
 	}
 
+	// if B is pressed
 	if (theXInput->bPressed)
 	{
+		// exit the game 
 		theLoop = false;
 	}
 	
@@ -754,10 +814,13 @@ bool cGame::getInput(bool theLoop)
 {
 	SDL_Event event;
 
+	// in the controller is connected
 	if (theXInput->controllerConnected)
 	{
+		// if b is pressed
 		if (theXInput->bPressed)
 		{
+			// exit the game
 			theLoop = false;
 		}
 	}
@@ -911,8 +974,6 @@ void cGame::ResetGame()
 		for (int j = 0; j < 9; j++)
 		{
 			blocks[i][j].setSpritePos({ (i * xPos) + 55,(j*yPos) + 60 });  // position the block according to i and j values
-
-			numberOfBlocks++;
 
 			// switch statement to determine which colour is assigned to the block, depending on the row (j)
 			// each colour has a different score value

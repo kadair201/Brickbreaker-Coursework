@@ -32,7 +32,6 @@ public:
 	void update(double deltaTime, SDL_Renderer* theRenderer);
 	bool getInput(bool theLoop);
 	double getElapsedSeconds();
-	int numberOfBlocks;
 	int playerScore;
 	string strScore;
 	cBlock blocks[16][9];

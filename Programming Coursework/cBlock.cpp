@@ -1,12 +1,15 @@
 #include "cBlock.h"
 
-int initCount = 0;
 
-void cBlock::initialise() {
+void cBlock::initialise() 
+{
+	// set the bounding rectangle
 	setBoundingRect();
+	// allow the blocks to render
 	isActive = true;
 }
 
-void cBlock::update(double deltaTime) {
+void cBlock::update(double deltaTime) 
+{
 
 }

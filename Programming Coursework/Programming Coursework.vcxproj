@@ -175,7 +175,7 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="cButtonMgr.cpp" />
     <ClCompile Include="cFont.cpp" />
     <ClCompile Include="cFontMgr.cpp" />
-    <ClCompile Include="cGameStuVer.cpp" />
+    <ClCompile Include="cGame.cpp" />
     <ClCompile Include="cHighScoreMgr.cpp" />
     <ClCompile Include="cPaddle.cpp" />
     <ClCompile Include="cSDL2WNDManager.cpp" />
@@ -191,6 +191,9 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     <Text Include="SDL2\SDL2_mixer-2.0.1\CHANGES.txt" />
     <Text Include="SDL2\SDL2_mixer-2.0.1\COPYING.txt" />
     <Text Include="SDL2\SDL2_mixer-2.0.1\README.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

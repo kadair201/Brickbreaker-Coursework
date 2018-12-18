@@ -22,7 +22,7 @@ cHighScoreMgr::~cHighScoreMgr()
 
 }
 
-// Some of the following code was given to me by coursemate Ruari McGhee
+// Parts of the following code was given to me by coursemate Ruari McGhee
 vector<int> cHighScoreMgr::GetHighScores()
 {
 	// open the high score file

@@ -83,9 +83,6 @@
     <ClCompile Include="cBlock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cGameStuVer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cPaddle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -128,10 +125,16 @@
     <ClCompile Include="cXInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="SDL2\SDL2_mixer-2.0.1\CHANGES.txt" />
     <Text Include="SDL2\SDL2_mixer-2.0.1\COPYING.txt" />
     <Text Include="SDL2\SDL2_mixer-2.0.1\README.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>
